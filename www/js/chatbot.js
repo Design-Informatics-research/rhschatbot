@@ -80,8 +80,6 @@ var ChatBot = function () {
             datalist.append($('<option value="'+examplePhrases[i]+'"></option>'));
         }
 
-        //console.log(examplePhrases);
-
         $('#chatBotCommandDescription').html(description);
     }
 

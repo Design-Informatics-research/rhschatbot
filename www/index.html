@@ -10,7 +10,10 @@
       * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
         * Enable inline JS: add 'unsafe-inline' to default-src
     -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+
+    <!-- ALLOW THIS FOR BUILDING ON ANDROID
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
+
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
@@ -26,21 +29,19 @@
       <p class="event received">Device is Ready</p>
     </div>
 
-    <div id="demo">
-      <div id="chatBot">
-        <div id="chatBotThinkingIndicator"></div>
-        <div id="chatBotHistory"></div>
+    <div id="chatContainer">
+      <div id="chatBotThinkingIndicator"></div>
+      <div id="chatBotHistory"></div>
+    </div>
+
+    <div id="response-container">
+      <div id="response-space">
+        <div id="chatBotCommandDescription"></div>
+        <input id="humanInput" type="text" placeholder="Say something" />
+
+        <div class="button" id="sampleconvo">Play sample conversation!</div>
+        <div class="button" id="options" style="margin-right:10px">What can I say?</div>
       </div>
-
-      <div style="clear: both;">&nbsp;</div>
-
-      <p>For this demo you need a mashape API key for the <a href="https://market.mashape.com/webknox/question-answering">WebKnox Question Answering API</a>.</p>
-
-      <div id="chatBotCommandDescription"></div>
-      <input id="humanInput" type="text" placeholder="Say something" />
-
-      <div class="button" id="sampleconvo">Play sample conversation!</div>
-      <div class="button" id="options" style="margin-right:10px">What can I say?</div>
     </div>
 
     <script type="text/javascript" src="cordova.js"></script>
