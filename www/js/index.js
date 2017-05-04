@@ -29,6 +29,7 @@ $(document).ready(function(){
       receivedElement.setAttribute('style', 'display:block;');
       receivedElement.innerHTML = id;
     }
+
   };
 
   app.initialize();
@@ -40,6 +41,7 @@ $(document).ready(function(){
     inputs: '#humanInput',
     inputCapabilityListing: true,
     engines: [ChatBot.Engines.duckduckgo()],
+
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
@@ -49,9 +51,8 @@ $(document).ready(function(){
   };
 
   ChatBot.init(config);
-
   ChatBot.setBotName("RHSBot");
-  
+
   ChatBot.addPattern("^bye$", "response", "See you later buddy", undefined, "Say 'Bye' to end the conversation.");
   
   ChatBot.addPattern("(what is the )?meaning of life", "response", "42", undefined, "Say 'What is the meaning of life' to get the answer.");

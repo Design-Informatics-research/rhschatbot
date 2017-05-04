@@ -370,6 +370,8 @@ var ChatBot = function () {
                     var engine = engines[e];
                     engine.react(text);
                 }
+            } else {
+                this.thinking(false); //Couldn't find anything to react with! Maybe this goes in the engine?
             }
 
         },
