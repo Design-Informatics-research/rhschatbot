@@ -37,6 +37,7 @@ $(document).ready(function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+      chatbotDb.insertLog(text, origin);
       return false;
     }
   };
@@ -60,4 +61,6 @@ $(document).ready(function(){
   $('#options').click(function(){
     $('#chatBotCommandDescription').slideToggle();
   });
+
+  chatbotDb.printLogs();
 });
