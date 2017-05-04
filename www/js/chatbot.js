@@ -31,6 +31,9 @@ var ChatBot = function () {
     // a callback for after a chat entry has been added
     var addChatEntryCallback;
 
+    //define which patterns are enabled, all are enabled if empty
+    var allowedPatterns = [];
+
     // list all the predefined commands and the commands of each engine
     function updateCommandDescription() {
         var description = '';
@@ -146,123 +149,6 @@ var ChatBot = function () {
 
     return {
         Engines: {
-            // the webknox API: http://webknox.com/api
-            webknox: function (apiKey) {
-
-                // patterns that the engine can resolve
-                var capabilities = [
-                    "Ask for stock prices like 'stock price apple' or '[company] stock'.",
-                    "Ask for distances as in 'how far is Perth from Melbourne' or 'distance between [place1] and [place2]'.",
-                    "Want to know what the weather is like, just ask like 'weather in San Diego, California'.",
-                    "Let WebKnox tell you a joke, just say 'tell me a joke'.",
-                    "Convert units, e.g. '2.4 miles in kilometers' or '4 tablespoons to ml?'.",
-                    "Get synonyms for a word, e.g. 'synonyms for car'.",
-                    "Ask for quotes like 'quotes about [topic]' or 'quotes about love'.",
-                    "Ask for quotes from a person 'quotes by [person]' or 'quotes by aristotle'.",
-                    "Ask for recipes like 'spaghetti recipes' or 'chocolate donuts'.",
-                    "Ask for nutrient contents like 'vitamin a in 2 carrots' or 'calories is 1 cup of butter'.",
-                    "Convert ingredients like '2 cups of butter in grams'.",
-                    "If you want more results, just say 'more'.",
-                    "For more similar results say 'more like the first/second/third...'.",
-                    "Or just ask anything that comes to mind like 'Who was pope in 1499?' or 'Who directed braveheart?'.",
-                ];
-
-                // the context id for the current conversation
-                var contextId = Math.random() * 100000;
-
-                return {
-                    react: function (query) {
-                        $.get('https://webknox-question-answering.p.mashape.com/questions/converse?mashape-key=' + apiKey + '&contextId=' + contextId + '&text=' + encodeURIComponent(query), function (data) {
-
-                            var content = data.answerText;
-
-                            if (data.media != undefined) {
-
-                                content += '<br>';
-
-                                for (var i = 0; i < data.media.length; i++) {
-                                    var ob = data.media[i];
-                                    content += '<div class="imgBox">' +
-                                        '<img src="' + ob.image + '" />' +
-                                        '<div class="title">' + ob.title + '</div>' +
-                                        '<div class="actions">' +
-                                        '<div class="button blue" onclick="document.location.href=\'' + ob.link + '\'">Details</div>' +
-                                        '<br>' +
-                                        '<div class="button blue" onclick=" ChatBot.addChatEntry(\'more like number ' + (i + 1) + '\',\'human\');ChatBot.react(\'more like ' + (i + 1) + '\');">More like this</div>' +
-                                        '</div>' +
-                                        '</div>';
-                                }
-
-                            }
-
-                            ChatBot.addChatEntry(content, "bot");
-                            ChatBot.thinking(false);
-                        });
-                    },
-                    getCapabilities: function () {
-                        return capabilities;
-                    },
-                    getSuggestUrl: function() {
-                        return 'https://webknox-question-answering.p.mashape.com/questions/converse/suggest?mashape-key=' + apiKey + '&query=';
-                    }
-                }
-            },
-
-            // the spoonacular API: http://spoonacular.com/food-api
-            spoonacular: function (apiKey) {
-
-                // patterns that the engine can resolve
-                var capabilities = [
-                    "Ask for recipes like 'chicken recipes' or 'spaghetti with shrimp'",
-                    "Ask for nutrient contents like 'vitamin a in 2 carrots' or 'calories is 1 cup of butter'",
-                    "Convert something with '2 cups of butter in grams'",
-                    "If you want more results, just say 'more'",
-                    "For more similar results say 'more like the first/second/third...'",
-                    "Let spoonacular tell you a joke, just say 'tell me a joke'.",
-                    "Want to learn some food trivia, just say 'food trivia'.",
-                ];
-
-                // the context id for the current conversation
-                var contextId = Math.random() * 100000;
-
-                return {
-                    react: function (query) {
-                        $.get('https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/food/converse?mashape-key=' + apiKey + '&contextId=' + contextId + '&text=' + encodeURIComponent(query), function (data) {
-
-                            var content = data.answerText;
-
-                            if (data.media != undefined) {
-
-                                content += '<br>';
-
-                                for (var i = 0; i < data.media.length; i++) {
-                                    var ob = data.media[i];
-                                    content += '<div class="imgBox">' +
-                                        '<img src="' + ob.image + '" />' +
-                                        '<div class="title">' + ob.title + '</div>' +
-                                        '<div class="actions">' +
-                                        '<div class="button blue" onclick="document.location.href=\'' + ob.link + '\'">Details</div>' +
-                                        '<br>' +
-                                        '<div class="button blue" onclick=" ChatBot.addChatEntry(\'more like number ' + (i + 1) + '\',\'human\');ChatBot.react(\'more like ' + (i + 1) + '\');">More like this</div>' +
-                                        '</div>' +
-                                        '</div>';
-                                }
-
-                            }
-
-                            ChatBot.addChatEntry(content, "bot");
-                            ChatBot.thinking(false);
-                        });
-                    },
-                    getCapabilities: function () {
-                        return capabilities;
-                    },
-                    getSuggestUrl: function() {
-                        return 'https://spoonacular-recipe-food-nutrition-v1.p.mashape.com/food/converse/suggest?mashape-key=' + apiKey + '&query=';
-                    }
-                }
-            },
-
             duckduckgo: function () {
 
                 // patterns that the engine can resolve
@@ -379,8 +265,17 @@ var ChatBot = function () {
             });
 
         },
+        inThread: function() {
+            return allowedPatterns.length > 0;
+        },
         setBotName: function (name) {
             botName = name;
+        },
+        setAllowedPatterns: function (arr) {
+            allowedPatterns = arr;
+        },
+        getAllowedPatterns: function () {
+            return allowedPatterns;
         },
         setHumanName: function (name) {
             humanName = name;
@@ -416,12 +311,26 @@ var ChatBot = function () {
                 ti.html('');
             }
         },
+
+        patternAllowed: function (pattern) {
+            var allowed = true;
+            if (ChatBot.inThread()){ 
+                allowed = allowedPatterns.includes(pattern.id);
+            } else {
+                allowed = (pattern.id == undefined);
+            }
+            return allowed;
+        },
+
         react: function react(text) {
             this.thinking(true);
 
             // check for custom patterns
             for (var i = 0; i < patterns.length; i++) {
                 var pattern = patterns[i];
+
+                if (!ChatBot.patternAllowed(pattern)) { continue; }
+                
                 var r = new RegExp(pattern.regexp, "i");
                 var matches = text.match(r);
                 //console.log(matches);
@@ -438,7 +347,7 @@ var ChatBot = function () {
                             }
                             break;
                         case 'response':
-//                                var response = text.replace(r, pattern.actionValue);
+//                          var response = text.replace(r, pattern.actionValue);
                             var response = pattern.actionValue;
                             if (response != undefined) {
                                 for (var j = 1; j < matches.length; j++) {
@@ -456,9 +365,11 @@ var ChatBot = function () {
                 }
             }
 
-            for (var e = 0; e < engines.length; e++) {
-                var engine = engines[e];
-                engine.react(text);
+            if (!ChatBot.inThread()) {
+                for (var e = 0; e < engines.length; e++) {
+                    var engine = engines[e];
+                    engine.react(text);
+                }
             }
 
         },
@@ -491,13 +402,14 @@ var ChatBot = function () {
             patterns.push(obj);
             updateCommandDescription();
         },
-        addPattern: function (regexp, actionKey, actionValue, callback, description) {
+        addPattern: function (regexp, actionKey, actionValue, callback, description, id) {
             var obj = {
                 regexp: regexp,
                 actionKey: actionKey,
                 actionValue: actionValue,
                 description: description,
-                callback: callback
+                callback: callback,
+                id: id
             };
             this.addPatternObject(obj);
         }
