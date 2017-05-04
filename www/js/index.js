@@ -14,7 +14,7 @@ function onError(error) {
 }
 
 var watchId;
-var geolocationOptions = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+var geolocationOptions = { maximumAge: 3000, timeout: 120000, enableHighAccuracy: true };
 
 $(document).ready(function(){
 
@@ -28,6 +28,7 @@ $(document).ready(function(){
 
     onResume: function () {
       this.receivedEvent('onresume');
+      navigator.geolocation.getPosition(onSuccess, onError, geolocationOptions);
     },
 
     onPause: function () {
@@ -36,7 +37,7 @@ $(document).ready(function(){
 
     onDeviceReady: function() {
       this.receivedEvent('deviceready');
-      watchId = navigator.geolocation.watchPosition(onSuccess, onError, geolocationOptions);
+      navigator.geolocation.getPosition(onSuccess, onError, geolocationOptions);
     },
 
     receivedEvent: function(id) {
