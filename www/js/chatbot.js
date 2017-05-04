@@ -258,8 +258,8 @@ var ChatBot = function () {
             // listen to inputs on the defined fields
             $(inputs).keyup(function (e) {
                 if (e.keyCode == 13) {
-                    ChatBot.addChatEntry($(this).val(), "human");
-                    ChatBot.react($(this).val());
+                    ChatBot.addChatEntry($(this).val().trim(), "human");
+                    ChatBot.react($(this).val().trim());
                 }
                 //console.log($(this).val());
             });
