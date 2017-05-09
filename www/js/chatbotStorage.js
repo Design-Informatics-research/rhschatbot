@@ -4,13 +4,13 @@ var chatbotDb = (function () {
 
   return {
 
-    migrateDb: function(){
+    migrate: function(){
       db.transaction(function (tx) {
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)');
       });
     },
 
-    resetDb: function() {
+    reset: function() {
       db.transaction(function (tx) {
         tx.executeSql("DROP TABLE LOGS");
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)');

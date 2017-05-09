@@ -1,58 +1,72 @@
-var onSuccess = function(position) {
-  console.log('Latitude: '          + position.coords.latitude          + '\n' +
+$(document).ready(function(){
+  /*
+  $('#sampleconvo').click(function(){
+    if (!ChatBot.playConversation(sampleConversation,4000)) {alert('conversation already running');};
+  });
+
+  $('#options').click(function(){
+    $('#chatBotCommandDescription').slideToggle();
+  }); */
+
+  setupChatBot();
+  app.initialize();
+  chatbotDb.printLogs();
+});
+
+var buildLocationString = function(position){
+  return 'Latitude: '   + position.coords.latitude          + '\n' +
   'Longitude: '         + position.coords.longitude         + '\n' +
   'Altitude: '          + position.coords.altitude          + '\n' +
   'Accuracy: '          + position.coords.accuracy          + '\n' +
   'Altitude Accuracy: ' + position.coords.altitudeAccuracy  + '\n' +
   'Heading: '           + position.coords.heading           + '\n' +
   'Speed: '             + position.coords.speed             + '\n' +
-  'Timestamp: '         + position.timestamp                + '\n');
-};
-
-function onError(error) {
-  console.log('code: '    + error.code    + '\n' + 'message: ' + error.message + '\n');
+  'Timestamp: '         + position.timestamp                + '\n';
 }
 
-var watchId;
+var onSuccess = function(position) {
+  console.log(buildLocationString(position));
+};
+
+var onError = function(error) {
+  console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+};
+
 var geolocationOptions = { maximumAge: 3000, timeout: 120000, enableHighAccuracy: true };
 
-$(document).ready(function(){
+var app = {
+  initialize: function() {
+    document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    document.addEventListener("resume", this.onResume.bind(this), false);
+    document.addEventListener("pause", this.onPause.bind(this), false);
+  },
 
-  var app = {
+  onResume: function () {
+    this.receivedEvent('onresume');
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
+  },
 
-    initialize: function() {
-      document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
-      document.addEventListener("resume", this.onResume.bind(this), false);
-      document.addEventListener("pause", this.onPause.bind(this), false);
-    },
+  onPause: function () {
+    this.receivedEvent('onpause');
+  },
 
-    onResume: function () {
-      this.receivedEvent('onresume');
-      navigator.geolocation.getPosition(onSuccess, onError, geolocationOptions);
-    },
+  onDeviceReady: function() {
+    this.receivedEvent('deviceready');
+    navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
+  },
 
-    onPause: function () {
-      this.receivedEvent('onpause');
-    },
+  receivedEvent: function(id) {
+    var parentElement = document.getElementById('device-event');
+    var listeningElement = parentElement.querySelector('.listening');
+    var receivedElement = parentElement.querySelector('.received');
 
-    onDeviceReady: function() {
-      this.receivedEvent('deviceready');
-      navigator.geolocation.getPosition(onSuccess, onError, geolocationOptions);
-    },
+    listeningElement.setAttribute('style', 'display:none;');
+    receivedElement.setAttribute('style', 'display:block;');
+    receivedElement.innerHTML = id;
+  }
+};
 
-    receivedEvent: function(id) {
-      var parentElement = document.getElementById('device-event');
-      var listeningElement = parentElement.querySelector('.listening');
-      var receivedElement = parentElement.querySelector('.received');
-
-      listeningElement.setAttribute('style', 'display:none;');
-      receivedElement.setAttribute('style', 'display:block;');
-      receivedElement.innerHTML = id;
-    }
-  };
-
-  app.initialize();
-
+var setupChatBot = function(){
   var sampleConversation = ["Hi", "My name is Fry", "Where is China?", "What is the population of China?", "Bye"];
 
   var config = {
@@ -70,6 +84,7 @@ $(document).ready(function(){
   };
 
   ChatBot.init(config);
+  
   ChatBot.setBotName("RHSBot");
 
   ChatBot.addPattern("^bye$", "response", "See you later buddy", undefined, "Say 'Bye' to end the conversation.");
@@ -79,6 +94,12 @@ $(document).ready(function(){
   ChatBot.addPattern("compute ([0-9]+) plus ([0-9]+)", "response", undefined, function (matches) {
     ChatBot.addChatEntry("That would be "+(1*matches[1]+1*matches[2])+".","bot");
   },"Say 'compute [number] plus [number]' to make the bot your math monkey");
+
+  ChatBot.addPattern("location", "response", undefined, function (matches) {
+    navigator.geolocation.getCurrentPosition(function(position){ 
+      ChatBot.addChatEntry(buildLocationString(position),"bot"); 
+    }, undefined, geolocationOptions);    
+  },"Say 'location' to check lat lng location");
 
   // Hi
 
@@ -116,15 +137,4 @@ $(document).ready(function(){
     undefined, "firstvisit");
 
   //End of thread.
-
-  /*
-  $('#sampleconvo').click(function(){
-    if (!ChatBot.playConversation(sampleConversation,4000)) {alert('conversation already running');};
-  });
-
-  $('#options').click(function(){
-    $('#chatBotCommandDescription').slideToggle();
-  }); */
-
-  chatbotDb.printLogs();
-});
+};
