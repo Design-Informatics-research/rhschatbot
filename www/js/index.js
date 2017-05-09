@@ -22,14 +22,40 @@ var buildLocationString = function(position){
   'Heading: '           + position.coords.heading           + '\n' +
   'Speed: '             + position.coords.speed             + '\n' +
   'Timestamp: '         + position.timestamp                + '\n';
-}
+};
 
-var onSuccess = function(position) {
+var logPosition = function(position) {
   console.log(buildLocationString(position));
 };
 
-var onError = function(error) {
+var positionError = function(error) {
   console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
+};
+
+var between = function(n, a, b) {
+  return (n - a) * (n - b) <= 0
+};
+
+var sites = [{
+  name: 'the sheep',
+  latitude: 55.946093,
+  longitude: -3.1998004
+}];
+
+var checkNearSite = function(position){
+  logPosition(position);
+  var nearby = false;
+  $.each(sites, function(site){
+    nearby = between(position.latitude, site.latitude-0.0001, site.latitude+0.0001) &&
+      between(position.longitude, site.longitude-0.0001, site.longitude+0.0001);
+    if (nearby){
+      ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
+      ChatBot.setAllowedPatterns(["confirm-location"]);
+      return false;
+    } else {
+      return true;
+    }
+  });
 };
 
 var geolocationOptions = { maximumAge: 30000, timeout: 5000, enableHighAccuracy: true };
@@ -43,7 +69,7 @@ var app = {
 
   onResume: function () {
     console.log('onresume');
-    navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
+    navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
   },
 
   onPause: function () {
@@ -52,7 +78,7 @@ var app = {
 
   onDeviceReady: function() {
     console.log('deviceready');
-    navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
+    navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
   }
 };
 
@@ -127,4 +153,10 @@ var setupChatBot = function(){
     undefined, "firstvisit");
 
   //End of thread.
+
+  ChatBot.addPattern("(yes|no)", "response", "OK - go and take a look!", 
+    function (matches) {
+      console.log("matches " + matches);
+      ChatBot.setAllowedPatterns([]);
+    }, undefined, "confirm-location");
 };
