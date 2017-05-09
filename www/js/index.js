@@ -32,7 +32,7 @@ var onError = function(error) {
   console.log('code: ' + error.code + '\n' + 'message: ' + error.message + '\n');
 };
 
-var geolocationOptions = { maximumAge: 3000, timeout: 5000, enableHighAccuracy: true };
+var geolocationOptions = { maximumAge: 30000, timeout: 5000, enableHighAccuracy: true };
 
 var app = {
   initialize: function() {
