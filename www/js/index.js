@@ -42,27 +42,17 @@ var app = {
   },
 
   onResume: function () {
-    this.receivedEvent('onresume');
+    console.log('onresume');
     navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
   },
 
   onPause: function () {
-    this.receivedEvent('onpause');
+    console.log('onpause');
   },
 
   onDeviceReady: function() {
-    this.receivedEvent('deviceready');
+    console.log('deviceready');
     navigator.geolocation.getCurrentPosition(onSuccess, onError, geolocationOptions);
-  },
-
-  receivedEvent: function(id) {
-    var parentElement = document.getElementById('device-event');
-    var listeningElement = parentElement.querySelector('.listening');
-    var receivedElement = parentElement.querySelector('.received');
-
-    listeningElement.setAttribute('style', 'display:none;');
-    receivedElement.setAttribute('style', 'display:block;');
-    receivedElement.innerHTML = id;
   }
 };
 
