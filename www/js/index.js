@@ -44,6 +44,9 @@ var sites = [{
 
 var checkNearSite = function(position){
   logPosition(position);
+
+  //TODO Skip this if it's user's first time.
+
   var nearby = false;
   $.each(sites, function(site){
     nearby = between(position.latitude, site.latitude-0.0001, site.latitude+0.0001) &&
@@ -69,7 +72,7 @@ var app = {
 
   onResume: function () {
     console.log('onresume');
-    navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
+    navigator.geolocation.getCurrentPosition(checkNearSite, positionError, geolocationOptions);
   },
 
   onPause: function () {
@@ -138,7 +141,7 @@ var setupChatBot = function(){
 
   ChatBot.addPattern("(.*?)", "response", "Great, where are you going first?", 
     function (matches) { 
-      console.log("matches: "); console.log(matches); 
+      console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns(["firstvisit"]);
     },
     undefined, "activity");
@@ -156,7 +159,7 @@ var setupChatBot = function(){
 
   ChatBot.addPattern("(yes|no)", "response", "OK - go and take a look!", 
     function (matches) {
-      console.log("matches " + matches);
+      console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns([]);
     }, undefined, "confirm-location");
 };
