@@ -6,14 +6,17 @@ var chatbotDb = (function () {
 
     migrate: function(){
       db.transaction(function (tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)', [], 
+          function(){ console.log("LOGS table created"); }, 
+          function(){ console.log("Couldn't created LOGS table"); });
       });
     },
 
     reset: function() {
       db.transaction(function (tx) {
-        tx.executeSql("DROP TABLE LOGS");
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)');
+        tx.executeSql("DROP TABLE LOGS", [], 
+          function(){ console.log("Dropped table LOGS, running migrate"); chatbotDb.migrate(); }, 
+          function(){ console.log("Couldn't drop table logs");  });
       });
     },
 
