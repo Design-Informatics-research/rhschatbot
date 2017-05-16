@@ -49,14 +49,12 @@ var sites = [{
 
 var checkNearSite = function(position){
   logPosition(position);
-
   //TODO Skip this if it's user's first time.
   var nearby = false;
-  console.log("Checking near sites.");
-  $.each(sites, function(site){
-    nearby = between(position.latitude, site.latitude-0.0005, site.latitude+0.0005) &&
-      between(position.longitude, site.longitude-0.0005, site.longitude+0.0005);
-    
+  $.each(sites, function(idx, site){
+    nearby = between(position.coords.latitude, site.latitude-0.0005, site.latitude+0.0005) &&
+      between(position.coords.longitude, site.longitude-0.0005, site.longitude+0.0005);
+
     console.log(site.name + " - near: " + nearby);
     
     if (nearby){
