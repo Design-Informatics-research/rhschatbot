@@ -14,7 +14,6 @@ $(document).ready(function(){
 
   setupChatBot();
   app.initialize();
-  chatbotDb.printLogs();
 });
 
 
@@ -101,7 +100,10 @@ var app = {
       console.log(err);
     });
 
-    //navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
+    //Insert saved chat
+    chatbotDb.logs(function(rows){ 
+      $.each(rows, function(i,entry){ ChatBot.addChatEntry(entry.text,entry.origin); });
+    });
   }
 };
 
@@ -136,7 +138,7 @@ var setupChatBot = function(){
 
   ChatBot.addPattern("location", "response", undefined, function (matches) {
     navigator.geolocation.getCurrentPosition(function(position){ 
-      ChatBot.addChatEntry(buildLocationString(position),"bot"); 
+      ChatBot.addChatEntry(buildLocationString(position),"bot");
     }, positionError, geolocationOptions);    
   },"Say 'location' to check lat lng location");
 

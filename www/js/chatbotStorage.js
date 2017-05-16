@@ -28,17 +28,28 @@ var chatbotDb = (function () {
       });
     },
 
-    printLogs: function() {
+    logs: function(cb){
       db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) {
-          var len = results.rows.length, i;
-
-          if (len == 0) { console.log("Logs table is empty"); return; }    
-          for (i = 0; i < len; i++){
-            msg = results.rows.item(i).timestamp + " " + results.rows.item(i).origin + ": " + results.rows.item(i).text;
-            console.log(msg);
+          var rows = [];
+          var i;
+          for (i = 0; i < results.rows.length; i++){
+            rows.push(results.rows.item(i));
           }
+          cb(rows);
         }, null);
+      });
+    },
+
+    printLogs: function() {
+      chatbotDb.logs(function(rows){
+        var i;
+        var r;
+        if (rows.length == 0) { console.log("Logs table is empty"); return; }    
+        for (i = 0; i < rows.length; i++){
+          r = rows[i].timestamp + " " + rows[i].origin + ": " + rows[i].text;
+          console.log(r);
+        }
       });
     }
 
