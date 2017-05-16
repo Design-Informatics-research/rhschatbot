@@ -20,8 +20,8 @@ var chatbotDb = (function () {
     insertLog: function(text, origin) {
       db.transaction(function (tx) {
         tx.executeSql('INSERT INTO LOGS (timestamp, text, origin) VALUES (?, ?, ?)', [new Date-0, text, origin], 
-          function(tx,results){  console.log("inserted"); }, 
-          function(tx, error){  console.log(error); } );
+          function(tx,results){}, 
+          function(tx, error){ console.log(error); } );
       });
     },
 

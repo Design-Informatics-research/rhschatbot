@@ -1,3 +1,7 @@
+//Centre of RHS map in pdf is roughly: 
+//55.94120,-3.37396 (near top bit of main ring)
+//0.0005 diff in latlng = around 30m
+
 $(document).ready(function(){
   /*
   $('#sampleconvo').click(function(){
@@ -12,6 +16,7 @@ $(document).ready(function(){
   app.initialize();
   chatbotDb.printLogs();
 });
+
 
 var buildLocationString = function(position){
   return 'Latitude: '   + position.coords.latitude          + '\n' +
@@ -38,19 +43,22 @@ var between = function(n, a, b) {
 
 var sites = [{
   name: 'the sheep',
-  latitude: 55.946093,
-  longitude: -3.1998004
+  latitude: 55.94121,
+  longitude: -3.37395
 }];
 
 var checkNearSite = function(position){
   logPosition(position);
 
   //TODO Skip this if it's user's first time.
-
   var nearby = false;
+  console.log("Checking near sites.");
   $.each(sites, function(site){
-    nearby = between(position.latitude, site.latitude-0.0001, site.latitude+0.0001) &&
-      between(position.longitude, site.longitude-0.0001, site.longitude+0.0001);
+    nearby = between(position.latitude, site.latitude-0.0005, site.latitude+0.0005) &&
+      between(position.longitude, site.longitude-0.0005, site.longitude+0.0005);
+    
+    console.log(site.name + " - near: " + nearby);
+    
     if (nearby){
       ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       ChatBot.setAllowedPatterns(["confirm-location"]);
@@ -61,7 +69,7 @@ var checkNearSite = function(position){
   });
 };
 
-var geolocationOptions = { maximumAge: 30000, timeout: 5000, enableHighAccuracy: true };
+var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
 var app = {
   initialize: function() {
@@ -81,7 +89,21 @@ var app = {
 
   onDeviceReady: function() {
     console.log('deviceready');
-    navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
+
+    var latitude = 55.94120;
+    var longitude = -3.37396;
+    var accuracy = 1;
+    var altitude = 0;
+
+    mockGeolocation.setMock([latitude, longitude, accuracy, altitude], function(suc){
+      console.log("Mocked location: ");
+      console.log(suc);
+    }, function(err){
+      console.log("Error mocking location: ");
+      console.log(err);
+    });
+
+    //navigator.geolocation.getCurrentPosition(logPosition, positionError, geolocationOptions);
   }
 };
 
@@ -117,7 +139,7 @@ var setupChatBot = function(){
   ChatBot.addPattern("location", "response", undefined, function (matches) {
     navigator.geolocation.getCurrentPosition(function(position){ 
       ChatBot.addChatEntry(buildLocationString(position),"bot"); 
-    }, undefined, geolocationOptions);    
+    }, positionError, geolocationOptions);    
   },"Say 'location' to check lat lng location");
 
   // Hi
@@ -141,7 +163,6 @@ var setupChatBot = function(){
 
   ChatBot.addPattern("(.*?)", "response", "Great, where are you going first?", 
     function (matches) { 
-      console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns(["firstvisit"]);
     },
     undefined, "activity");
@@ -150,7 +171,6 @@ var setupChatBot = function(){
 
   ChatBot.addPattern("(.*?)", "response", "OK, let me know when you get there!", 
     function (matches) { 
-      console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns([]);
     },
     undefined, "firstvisit");
