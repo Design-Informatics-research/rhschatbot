@@ -113,6 +113,7 @@ var setupChatBot = function(){
   var config = {
     botName: 'Duck Duck Go Bot',
     inputs: '#humanInput',
+    sendBtns: '#send',
     inputCapabilityListing: true,
     engines: [ChatBot.Engines.duckduckgo()],
 
@@ -183,3 +184,13 @@ var setupChatBot = function(){
       ChatBot.setAllowedPatterns([]);
     }, undefined, "confirm-location");
 };
+
+/*
+
+TODO:
+
+Fix matching with new line values e.g. "My name \n is XYZ" 
+Attaching pictures
+Recording 'state' information e.g. user's name 
+
+*/

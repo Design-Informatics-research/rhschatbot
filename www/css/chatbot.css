@@ -110,12 +110,11 @@
   }
 }
 
-
 #chatContainer { margin-bottom: 9em; }
 
 #response-container {
   /*background-color: #ffffff;*/
-  height: 7em;
+  height: 7.7em;
   width: 100%;
   position: fixed;
   bottom: 0px;
@@ -130,6 +129,7 @@
 #response-space {
   /*background-color: #ffffff;*/
   padding:2%;
+  padding-top: 1%;
   line-height: 1.4em;
   font: 13px helvetica,arial,freesans,clean,sans-serif;
   color: black;
@@ -142,7 +142,7 @@
   width: 90%;
 }
 
-.button {
+.button, .setResponse {
   display: inline-block;
   background-color: darkcyan;
   color: #fff;
@@ -195,4 +195,41 @@
   margin-left: -1.9vw;
   left: 0;
   margin-top: 4px;
+}
+
+textarea#humanInput { 
+  width: 76vw;
+  font-size: 1.2em;
+  padding: 1vh 1.5vw;
+}
+
+div#send {
+  width: 13vw;
+  text-align: center;
+  padding: 1.3vw;
+  padding-top: 2.4vh;
+  padding-bottom: 2.4vh;
+  font-size: 1.2em;
+  border-radius: 3px;
+}
+
+.setResponse { 
+  width: 28vw;
+  text-align: center;
+  padding: 1.3vw;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
+  font-size: 1.2em;
+  border-radius: 3px;
+  float: left;
+  text-decoration: none;
+  margin-right: 1vw;
+  margin-top: 3px;
+  min-width: 100px;
+}
+
+@media (max-width: 491px) {
+  .setResponse {
+    width: 44.4vw;
+  }
 }
