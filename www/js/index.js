@@ -73,6 +73,8 @@ var captureSuccess = function(mediaFiles) {
   var i, path, len;
   for (i = 0, len = mediaFiles.length; i < len; i += 1) {
     path = mediaFiles[i].fullPath;
+    console.log('<img class="" src="'+path+'" />');
+    ChatBot.addChatEntry('<img class="" src="'+path+'" />',"bot");
     // do something interesting with the file
     console.log(path);
   }
