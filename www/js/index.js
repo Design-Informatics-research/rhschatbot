@@ -68,6 +68,21 @@ var checkNearSite = function(position){
 
 var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
+// image capture callback
+var captureSuccess = function(mediaFiles) {
+  var i, path, len;
+  for (i = 0, len = mediaFiles.length; i < len; i += 1) {
+    path = mediaFiles[i].fullPath;
+    // do something interesting with the file
+    console.log(path);
+  }
+};
+
+// image capture error callback
+var captureError = function(error) {
+  navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
+};
+
 var app = {
   initialize: function() {
     document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
@@ -184,6 +199,12 @@ var setupChatBot = function(){
       console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns([]);
     }, undefined, "confirm-location");
+
+  // Start image capture
+  ChatBot.addPattern("picture", "response", "OK, take picture!", 
+    function (matches) {
+      navigator.device.capture.captureImage(captureSuccess, captureError, {limit:1});
+    }, undefined, "take-picture");
 
 };
 
