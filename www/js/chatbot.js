@@ -425,8 +425,9 @@ var ChatBot = function () {
             $(sendBtns).hide();
             $('.setResponse').remove();
             var sr;
+
             $.each(setResponses, function(idx, setResponse){
-                sr = $('<a class="setResponse" href="#">'+setResponse+'</a>');
+                sr = $('<a class="setResponse rCountOf'+setResponses.length+'" href="#">'+setResponse+'</a>');
                 $(elementId).append(sr);
                 $(sr).click(function(){
                     $('.setResponse').remove();
