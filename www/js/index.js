@@ -103,6 +103,7 @@ var app = {
     //Insert saved chat
     chatbotDb.logs(function(rows){ 
       $.each(rows, function(i,entry){ ChatBot.addChatEntry(entry.text,entry.origin); });
+      $("html, body").animate({ scrollTop: $(document).height() }, "slow");
     });
   }
 };

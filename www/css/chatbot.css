@@ -198,7 +198,7 @@
 }
 
 textarea#humanInput { 
-  width: 75vw;
+  width: 73.5vw;
   font-size: 1.2em;
   padding: 1vh 1.5vw;
   margin-left: 0.5vw;
@@ -207,7 +207,7 @@ textarea#humanInput {
 }
 
 div#send {
-  width: 14vw;
+  width: 15vw;
   text-align: center;
   padding: 3vh 2vw;
   font-size: 1.2em;

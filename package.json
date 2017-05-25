@@ -1,0 +1,17 @@
+{
+    "name": "org.designinformatics.rhschatbot",
+    "version": "1.0.0",
+    "displayName": "rhschatbot",
+    "cordova": {
+        "platforms": [
+            "android"
+        ],
+        "plugins": {
+            "cordova-plugin-whitelist": {}
+        }
+    },
+    "dependencies": {
+        "cordova-android": "~5.2.2",
+        "cordova-plugin-whitelist": "1"
+    }
+}
