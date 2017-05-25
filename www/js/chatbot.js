@@ -420,7 +420,7 @@ var ChatBot = function () {
             this.addPatternObject(obj);
         },
         addSetResponses: function(setResponses, elementId) {
-            if (elementId == undefined) { elementId = '' }
+            if (elementId == undefined) { elementId = '#response-space' }
             $(inputs).hide();
             $(sendBtns).hide();
             $('.setResponse').remove();

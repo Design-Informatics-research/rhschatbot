@@ -16,7 +16,6 @@ $(document).ready(function(){
   app.initialize();
 });
 
-
 var buildLocationString = function(position){
   return 'Latitude: '   + position.coords.latitude          + '\n' +
   'Longitude: '         + position.coords.longitude         + '\n' +
@@ -59,6 +58,7 @@ var checkNearSite = function(position){
     if (nearby){
       ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       ChatBot.setAllowedPatterns(["confirm-location"]);
+      ChatBot.addSetResponses(["Yes", "No"]);
       return false;
     } else {
       return true;
@@ -179,11 +179,12 @@ var setupChatBot = function(){
 
   //End of thread.
 
-  ChatBot.addPattern("(yes|no)", "response", "OK - go and take a look!", 
+  ChatBot.addPattern("(Yes|No)", "response", "OK - go and take a look!", 
     function (matches) {
       console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns([]);
     }, undefined, "confirm-location");
+
 };
 
 /*
