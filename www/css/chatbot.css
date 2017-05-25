@@ -25,6 +25,7 @@ body {
   font-size: 0.9em;
   margin-bottom: 4px;
 }
+
 .chatBotChatEntry .imgBox {
   position: relative;
   width: 32%;
@@ -80,6 +81,7 @@ body {
   color: #fff;
   padding: 20px;
 }
+
 .commandDescription span.phraseHighlight {
   color: chartreuse;
 }
@@ -207,7 +209,7 @@ textarea#humanInput {
   padding: 1vh 1.5vw;
   margin-left: 0.5vw;
   height: 7vh;
-  margin-top: 2.3vh;
+  margin-top: 1.3vh;
 }
 
 div#send {
@@ -217,12 +219,12 @@ div#send {
   font-size: 1.2em;
   border-radius: 3px;
   margin-right: 0.5vw;
-  margin-top: 2.3vh;
+  margin-top: 1.3vh;
 }
 
 .setResponse { 
   width: 45.4vw;
-  margin-top: 3vh;
+  margin-top: 2.9vh;
   text-align: center;
   padding: 1.3vw;
   padding-top: 2vh;
