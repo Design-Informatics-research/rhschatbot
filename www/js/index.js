@@ -167,6 +167,13 @@ var setupChatBot = function(){
       ChatBot.setAllowedPatterns(["name"]);
     }, "Say 'hi' to get started.");
 
+  // Start image capture
+  ChatBot.addPattern("^picture$", "response", undefined, 
+    function (matches) {
+      ChatBot.addChatEntry("OK, take a picture!","bot");
+      navigator.device.capture.captureImage(captureSuccess, captureError, {limit:1});
+    });
+
   //Rory
 
   ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "response", "Hi $1, what are you planning to do today?", 
@@ -199,12 +206,6 @@ var setupChatBot = function(){
       console.log("matches: "); console.log(matches);
       ChatBot.setAllowedPatterns([]);
     }, undefined, "confirm-location");
-
-  // Start image capture
-  ChatBot.addPattern("picture", "response", "OK, take picture!", 
-    function (matches) {
-      navigator.device.capture.captureImage(captureSuccess, captureError, {limit:1});
-    }, undefined, "take-picture");
 
 };
 
