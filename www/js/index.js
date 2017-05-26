@@ -68,13 +68,12 @@ var checkNearSite = function(position){
 
 var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
-function onPicSuccess(imageURI) {
-  console.log(imageURI);
-  ChatBot.addChatEntry('<img class="" src="'+imageURI+'" />',"bot");
+function onPicSuccess(imageURL) {
+  ChatBot.addChatEntry('<img class="" src="'+imageURL+'" />',"human");
 }
 
 function onPicFail(message) {
-  alert('Failed because: ' + message);
+  console.log('Failed because: ' + message);
 }
 
 var app = {
@@ -165,7 +164,7 @@ var setupChatBot = function(){
   ChatBot.addPattern("^picture$", "response", undefined, 
     function (matches) {
       ChatBot.addChatEntry("OK, take a picture!","bot");
-      navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50,  destinationType: Camera.DestinationType.FILE_URI });
+      navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50, saveToPhotoAlbum: true, destinationType: Camera.DestinationType.FILE_URI });
     });
 
   //Rory

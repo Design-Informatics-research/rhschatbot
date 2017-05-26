@@ -67,6 +67,10 @@ body {
   width: 100%;
 }
 
+.chatBotChatEntry.human img {
+  width: 90%;
+}
+
 .bot {
   /*border: 4px solid rgba(0, 132, 60, 0.2);*/
   background-color: rgba(0, 132, 60, 0.2);
