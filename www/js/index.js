@@ -68,22 +68,14 @@ var checkNearSite = function(position){
 
 var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
-// image capture callback
-var captureSuccess = function(mediaFiles) {
-  var i, path, len;
-  for (i = 0, len = mediaFiles.length; i < len; i += 1) {
-    path = mediaFiles[i].fullPath;
-    console.log('<img class="" src="'+path+'" />');
-    ChatBot.addChatEntry('<img class="" src="'+path+'" />',"bot");
-    // do something interesting with the file
-    console.log(path);
-  }
-};
+function onPicSuccess(imageURI) {
+  console.log(imageURI);
+  ChatBot.addChatEntry('<img class="" src="'+imageURI+'" />',"bot");
+}
 
-// image capture error callback
-var captureError = function(error) {
-  navigator.notification.alert('Error code: ' + error.code, null, 'Capture Error');
-};
+function onPicFail(message) {
+  alert('Failed because: ' + message);
+}
 
 var app = {
   initialize: function() {
@@ -173,7 +165,7 @@ var setupChatBot = function(){
   ChatBot.addPattern("^picture$", "response", undefined, 
     function (matches) {
       ChatBot.addChatEntry("OK, take a picture!","bot");
-      navigator.device.capture.captureImage(captureSuccess, captureError, {limit:1});
+      navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50,  destinationType: Camera.DestinationType.FILE_URI });
     });
 
   //Rory
