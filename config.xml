@@ -24,5 +24,8 @@
     </platform>
     <engine name="android" spec="~5.2.2" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
-    <plugin name="cordova-plugin-camera" spec="~2.4.1" />
+    <plugin name="cordova-plugin-camera" spec="^2.4.1">
+        <variable name="CAMERA_USAGE_DESCRIPTION" value="take pictures to document your journey" />
+        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="show photos youve taken" />
+    </plugin>
 </widget>
