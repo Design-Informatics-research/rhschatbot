@@ -306,7 +306,7 @@ var ChatBot = function () {
                 allowedPatterns = arr; 
             } else { 
                 allowedPatterns = []; 
-            }  
+            }
         },
         getAllowedPatterns: function () {
             return allowedPatterns;
@@ -387,7 +387,7 @@ var ChatBot = function () {
                             break;
                         case 'response':
                             this.setAllowedPatterns(pattern.allowedPatterns);
-                            
+
                             var response = pattern.actionValue;
                             if (response != undefined) {
                                 for (var j = 1; j < matches.length; j++) {

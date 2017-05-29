@@ -76,7 +76,7 @@ function onPicFail(message) {
   console.log('Failed because: ' + message);
 }
 
-function insertSavedChat(){
+function loadSavedChat(){
   chatbotDb.logs(function(rows){ 
     $.each(rows, function(i,entry){
       ChatBot.addChatEntry(entry.text,entry.origin);
@@ -84,10 +84,11 @@ function insertSavedChat(){
     });
     setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
   });
-}
 
-//ChatBot.setAllowedPatterns(entry.allowedPatterns.split(","));
-//ChatBot.getAllowedPatterns().join()
+  chatbotDb.allowedPatterns(function(rows){ 
+    ChatBot.setAllowedPatterns(rows);
+  });
+}
 
 var app = {
   initialize: function() {
@@ -121,7 +122,7 @@ var app = {
       console.log(err);
     });
 
-    insertSavedChat();
+    loadSavedChat();
   }
 };
 
@@ -138,8 +139,11 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+      if (origin == "bot") {
+        chatbotDb.saveAllowedPatterns(ChatBot.getAllowedPatterns());
+      }
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
-      return false;
+      return false;    
     }
   };
 
