@@ -260,12 +260,23 @@ var ChatBot = function () {
                 $(inputs).attr("list", "chatBotCommands");
             }
 
+            // disable send if nothing in area
+            $(inputs).keyup(function(){
+                if ($.trim($(inputs).val()).length < 1) {
+                    $(sendBtns).addClass('disabled');
+                } else {
+                    $(sendBtns).removeClass('disabled');
+                }
+            });
+
             // listen for send on defined field
             var submission;
             $(sendBtns).click(function(e) {
-                submission = $(inputs).val().trim();
-                ChatBot.addChatEntry(submission, "human");
-                ChatBot.react(submission);
+                if (!$(this).hasClass('disabled')){
+                    submission = $(inputs).val().trim();
+                    ChatBot.addChatEntry(submission, "human");
+                    ChatBot.react(submission);                    
+                }
             });
 
         },

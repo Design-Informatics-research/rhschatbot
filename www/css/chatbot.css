@@ -41,6 +41,12 @@ body {
   padding: 5px;
   width: 50%;
 }
+
+div#send.disabled, .button.disabled {
+  background-color: silver;
+  color: #fff;
+}
+
 .chatBotChatEntry .imgBox .actions {
   position: absolute;
   display: none;
@@ -217,13 +223,12 @@ textarea#humanInput {
 }
 
 div#send {
-  width: 15vw;
   text-align: center;
-  padding: 3vh 2vw;
-  font-size: 1.2em;
+  padding: 0.9vh 5vw 0vh 5vw;
+  font-size: 3.2em;
   border-radius: 3px;
   margin-right: 0.5vw;
-  margin-top: 1.3vh;
+  margin-top: 1vh;
 }
 
 .setResponse { 
