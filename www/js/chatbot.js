@@ -286,6 +286,18 @@ var ChatBot = function () {
         setBotName: function (name) {
             botName = name;
         },
+        getBotName: function () {
+            return botName;
+        },
+        getOriginName: function (origin) {
+            if (origin=="human"){
+                return ChatBot.getHumanName();
+            } else if (origin="bot") {
+                return ChatBot.getBotName();
+            } else {
+                return origin;
+            }
+        },
         setAllowedPatterns: function (arr) {
             allowedPatterns = arr;
         },
@@ -295,6 +307,9 @@ var ChatBot = function () {
         setHumanName: function (name) {
             humanName = name;
             $('.chatBotChatEntry.human .origin').html(name);
+        },
+        getHumanName: function () {
+            return humanName;
         },
         addChatEntry: function addChatEntry(text, origin) {
             if (text == undefined) {

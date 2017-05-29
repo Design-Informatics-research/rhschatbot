@@ -6,7 +6,7 @@ var chatbotDb = (function () {
 
     migrate: function(){
       db.transaction(function (tx) {
-        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin)', [], 
+        tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin, originName)', [], 
           function(){ console.log("LOGS table created"); }, 
           function(){ console.log("Couldn't created LOGS table"); });
       });
@@ -20,9 +20,9 @@ var chatbotDb = (function () {
       });
     },
 
-    insertLog: function(text, origin) {
+    insertLog: function(text, origin, originName) {
       db.transaction(function (tx) {
-        tx.executeSql('INSERT INTO LOGS (timestamp, text, origin) VALUES (?, ?, ?)', [new Date-0, text, origin], 
+        tx.executeSql('INSERT INTO LOGS (timestamp, text, origin, originName) VALUES (?, ?, ?, ?)', [new Date-0, text, origin, originName], 
           function(tx,results){}, 
           function(tx, error){ console.log(error); } );
       });
@@ -47,8 +47,8 @@ var chatbotDb = (function () {
         var r;
         if (rows.length == 0) { console.log("Logs table is empty"); return; }    
         for (i = 0; i < rows.length; i++){
-          r = rows[i].timestamp + " " + rows[i].origin + ": " + rows[i].text;
-          console.log(r);
+          //r = rows[i].timestamp + " " + rows[i].origin + ": " + rows[i].text;
+          console.log(rows[i]);
         }
       });
     }

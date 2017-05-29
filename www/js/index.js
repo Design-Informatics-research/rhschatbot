@@ -110,7 +110,7 @@ var app = {
 
     //Insert saved chat
     chatbotDb.logs(function(rows){ 
-      $.each(rows, function(i,entry){ ChatBot.addChatEntry(entry.text,entry.origin); });
+      $.each(rows, function(i,entry){ console.log(entry); ChatBot.addChatEntry(entry.text,entry.origin); });
       setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
     });
   }
@@ -129,7 +129,7 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
-      chatbotDb.insertLog(text, origin);
+      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
       return false;
     }
   };
@@ -206,9 +206,9 @@ var setupChatBot = function(){
 
 TODO:
 
-Fix matching with new line values e.g. "My name \n is XYZ" 
-Fix my name is vs / <name> response 
-Persist 'state' information e.g. user's name 
+Fix matching with new line values e.g. "My name \n is XYZ"
+Fix my name is vs / <name> response
+Add state data to responses, ie: { humanName: "", allowedResponses: [] }
 'Respond with picture' option
 Actual convo
 
