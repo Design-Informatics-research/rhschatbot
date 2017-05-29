@@ -56,8 +56,8 @@ var checkNearSite = function(position){
     console.log(site.name + " - near: " + nearby);
     
     if (nearby){
-      ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       ChatBot.setAllowedPatterns(["confirm-location"]);
+      ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       ChatBot.addSetResponses(["Yes", "No"]);
       return false;
     } else {
@@ -74,6 +74,17 @@ function onPicSuccess(imageURL) {
 
 function onPicFail(message) {
   console.log('Failed because: ' + message);
+}
+
+function insertSavedChat(){
+  chatbotDb.logs(function(rows){ 
+    $.each(rows, function(i,entry){
+      ChatBot.addChatEntry(entry.text,entry.origin);
+      ChatBot.setOriginName(entry.origin, entry.originName);
+      ChatBot.setAllowedPatterns(entry.allowedPatterns.split(","));
+    });
+    setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
+  });
 }
 
 var app = {
@@ -108,15 +119,7 @@ var app = {
       console.log(err);
     });
 
-    //Insert saved chat
-    chatbotDb.logs(function(rows){ 
-      $.each(rows, function(i,entry){
-        ChatBot.addChatEntry(entry.text,entry.origin);
-        ChatBot.setOriginName(entry.origin, entry.originName);
-        //ChatBot.setAllowedPatterns();
-      });
-      setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
-    });
+    insertSavedChat();
   }
 };
 
@@ -161,8 +164,7 @@ var setupChatBot = function(){
   ChatBot.addPattern("^hi$", "response", undefined, 
     function (matches) { 
       ChatBot.addChatEntry("Hi there, what's your name?","bot");
-      ChatBot.setAllowedPatterns(["name"]);
-    }, "Say 'hi' to get started.");
+    }, "Say 'hi' to get started.", undefined, ["name"]);
 
   // Start image capture
   ChatBot.addPattern("^picture$", "response", undefined, 
@@ -174,35 +176,25 @@ var setupChatBot = function(){
   //Rory
 
   ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "response", "Hi $1, what are you planning to do today?", 
-    function (matches) { 
-      ChatBot.setHumanName(matches[1]);
-      ChatBot.setAllowedPatterns(["activity"]);
-    },
-    "Say 'My name is [your name]' or 'I am [name]' to be called that by the bot", "name");
+    function (matches) { ChatBot.setHumanName(matches[1]); },
+    "Say 'My name is [your name]' or 'I am [name]' to be called that by the bot", "name", ["activity"]);
 
   //I'm going to see animals
 
   ChatBot.addPattern("(.*?)", "response", "Great, where are you going first?", 
-    function (matches) { 
-      ChatBot.setAllowedPatterns(["firstvisit"]);
-    },
-    undefined, "activity");
+    undefined, undefined, "activity", ["first-visit"]);
 
   // To the sheep.
 
   ChatBot.addPattern("(.*?)", "response", "OK, let me know when you get there!", 
-    function (matches) { 
-      ChatBot.setAllowedPatterns([]);
-    },
-    undefined, "firstvisit");
+    undefined, undefined, "first-visit", undefined);
 
   //End of thread.
 
   ChatBot.addPattern("(Yes|No)", "response", "OK - go and take a look!", 
     function (matches) {
       console.log("matches: "); console.log(matches);
-      ChatBot.setAllowedPatterns([]);
-    }, undefined, "confirm-location");
+    }, undefined, "confirm-location", undefined);
 
 };
 
@@ -212,7 +204,6 @@ TODO:
 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
-Add state data to responses, ie: { allowedResponses: [] }
 'Respond with picture' option
 Actual convo
 

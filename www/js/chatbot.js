@@ -325,9 +325,11 @@ var ChatBot = function () {
             if (text == '') {
                 text = 'Sorry, I have no idea.';
             }
+
             var entryDiv = $('<div class="chatBotChatEntry ' + origin + '"></div>');
             entryDiv.html('<span class="origin">' + (origin == 'bot' ? botName : humanName) + '</span>' + text);
             $('#chatBotHistory').append(entryDiv);
+
             if (addChatEntryCallback != undefined) {
                 addChatEntryCallback.call(this, entryDiv, text, origin);
             }
@@ -384,7 +386,8 @@ var ChatBot = function () {
                             }
                             break;
                         case 'response':
-//                          var response = text.replace(r, pattern.actionValue);
+                            this.setAllowedPatterns(pattern.allowedPatterns);
+                            
                             var response = pattern.actionValue;
                             if (response != undefined) {
                                 for (var j = 1; j < matches.length; j++) {
@@ -441,15 +444,19 @@ var ChatBot = function () {
             patterns.push(obj);
             updateCommandDescription();
         },
-        addPattern: function (regexp, actionKey, actionValue, callback, description, id) {
+        addPattern: function (regexp, actionKey, actionValue, callback, description, id, allowedPatterns) {
+            if (allowedPatterns == undefined) { allowedPatterns = []; }
+
             var obj = {
                 regexp: regexp,
                 actionKey: actionKey,
                 actionValue: actionValue,
                 description: description,
                 callback: callback,
-                id: id
+                id: id,
+                allowedPatterns: allowedPatterns
             };
+
             this.addPatternObject(obj);
         },
         addSetResponses: function(setResponses, elementId) {
