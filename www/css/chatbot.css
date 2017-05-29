@@ -67,8 +67,8 @@ body {
   width: 100%;
 }
 
-.chatBotChatEntry.human img {
-  width: 90%;
+.chatBotChatEntry.human img, .chatBotChatEntry.bot img {
+  max-width: 95%;
 }
 
 .bot {

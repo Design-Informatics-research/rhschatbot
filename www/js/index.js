@@ -208,7 +208,8 @@ TODO:
 
 Fix matching with new line values e.g. "My name \n is XYZ" 
 Fix my name is vs / <name> response 
-Attaching pictures
-Recording 'state' information e.g. user's name 
+Persist 'state' information e.g. user's name 
+'Respond with picture' option
+Actual convo
 
 */
