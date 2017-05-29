@@ -43,6 +43,27 @@ var chatbotDb = (function () {
       });
     },
 
+    deleteAllowedPatterns: function(cb){
+      db.transaction(function (tx) {
+        tx.executeSql('DELETE FROM ALLOWED_PATTERNS', [], 
+          function(tx,results){ /*if (cb) { cb() }*/ },
+          function(tx, error){ console.log(error); } );
+      });
+    },
+
+    saveAllowedPatterns: function(allowedPatterns) {
+      db.transaction(function (tx) {
+        tx.executeSql('DELETE FROM ALLOWED_PATTERNS', [], 
+          function(tx,results){
+            var i;
+            for (i = 0; i < allowedPatterns.length; i++){
+              chatbotDb.insertAllowedPattern(allowedPatterns[i]);
+            }
+          },
+          function(tx, error){ console.log(error); } );
+      });
+    },
+
     logs: function(cb){
       db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM LOGS', [], function (tx, results) {
