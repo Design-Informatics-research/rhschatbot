@@ -133,7 +133,7 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
-      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin), ChatBot.getAllowedPatterns());
+      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin), ChatBot.getAllowedPatterns().join() );
       return false;
     }
   };
