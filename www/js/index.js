@@ -79,7 +79,8 @@ function onPicFail(message) {
 function loadSavedChat(){
   chatbotDb.logs(function(rows){ 
     $.each(rows, function(i,entry){
-      ChatBot.addChatContent(entry.text,entry.origin);
+      var entryDiv = ChatBot.addChatContent(entry.text,entry.origin);
+      $(entryDiv).show();
       ChatBot.setOriginName(entry.origin, entry.originName);
     });
     setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
@@ -209,7 +210,7 @@ var setupChatBot = function(){
 
 TODO:
 
-Fix no scrolling when it's bot.
+Fix sheep message interruption of thread 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
 Help button response

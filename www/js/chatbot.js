@@ -318,12 +318,13 @@ var ChatBot = function () {
         getHumanName: function () {
             return humanName;
         },
-        addChatContent: function (text, origin) {
+        addChatContent: function addChatContent(text, origin) {
             var entryDiv = $('<div class="chatBotChatEntry ' + origin + '"></div>');
             entryDiv.html('<span class="origin">' + (origin == 'bot' ? botName : humanName) + '</span>' + text);
             $('#chatBotHistory').append(entryDiv);
+            return entryDiv;
         },
-        addChatEntry: function (text, origin) {
+        addChatEntry: function addChatEntry(text, origin) {
             if (text == undefined) {
                 return;
             }
@@ -331,7 +332,7 @@ var ChatBot = function () {
                 text = 'Sorry, I have no idea.';
             }
 
-            addChatContent(text, origin);
+            var entryDiv = ChatBot.addChatContent(text, origin);
             
             if (addChatEntryCallback != undefined) {
                 addChatEntryCallback.call(this, entryDiv, text, origin);
