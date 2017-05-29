@@ -275,7 +275,8 @@ var ChatBot = function () {
                 if (!$(this).hasClass('disabled')){
                     submission = $(inputs).val().trim();
                     ChatBot.addChatEntry(submission, "human");
-                    ChatBot.react(submission);                    
+                    ChatBot.react(submission);
+                    $("html, body").animate({ scrollTop: $(document).height() }, "slow");                    
                 }
             });
 

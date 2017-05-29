@@ -82,7 +82,7 @@ function loadSavedChat(){
       ChatBot.addChatEntry(entry.text,entry.origin);
       ChatBot.setOriginName(entry.origin, entry.originName);
     });
-    setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
+    setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
   });
 
   chatbotDb.allowedPatterns(function(rows){ 
@@ -138,7 +138,6 @@ var setupChatBot = function(){
 
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
-      $("html, body").animate({ scrollTop: $(document).height() }, "slow");
       if (origin == "bot") {
         chatbotDb.saveAllowedPatterns(ChatBot.getAllowedPatterns());
       }
@@ -210,6 +209,7 @@ TODO:
 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
+Help button response
 'Respond with picture' option
 Actual convo
 
