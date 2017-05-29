@@ -79,7 +79,7 @@ function onPicFail(message) {
 function loadSavedChat(){
   chatbotDb.logs(function(rows){ 
     $.each(rows, function(i,entry){
-      ChatBot.addChatEntry(entry.text,entry.origin);
+      ChatBot.addChatContent(entry.text,entry.origin);
       ChatBot.setOriginName(entry.origin, entry.originName);
     });
     setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
@@ -138,11 +138,13 @@ var setupChatBot = function(){
 
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
+      setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);                  
+
       if (origin == "bot") {
         chatbotDb.saveAllowedPatterns(ChatBot.getAllowedPatterns());
       }
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
-      return false;    
+      return false;
     }
   };
 
@@ -207,6 +209,7 @@ var setupChatBot = function(){
 
 TODO:
 
+Fix no scrolling when it's bot.
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
 Help button response

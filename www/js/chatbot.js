@@ -276,7 +276,6 @@ var ChatBot = function () {
                     submission = $(inputs).val().trim();
                     ChatBot.addChatEntry(submission, "human");
                     ChatBot.react(submission);
-                    $("html, body").animate({ scrollTop: $(document).height() }, "slow");                    
                 }
             });
 
@@ -319,7 +318,12 @@ var ChatBot = function () {
         getHumanName: function () {
             return humanName;
         },
-        addChatEntry: function addChatEntry(text, origin) {
+        addChatContent: function (text, origin) {
+            var entryDiv = $('<div class="chatBotChatEntry ' + origin + '"></div>');
+            entryDiv.html('<span class="origin">' + (origin == 'bot' ? botName : humanName) + '</span>' + text);
+            $('#chatBotHistory').append(entryDiv);
+        },
+        addChatEntry: function (text, origin) {
             if (text == undefined) {
                 return;
             }
@@ -327,10 +331,8 @@ var ChatBot = function () {
                 text = 'Sorry, I have no idea.';
             }
 
-            var entryDiv = $('<div class="chatBotChatEntry ' + origin + '"></div>');
-            entryDiv.html('<span class="origin">' + (origin == 'bot' ? botName : humanName) + '</span>' + text);
-            $('#chatBotHistory').append(entryDiv);
-
+            addChatContent(text, origin);
+            
             if (addChatEntryCallback != undefined) {
                 addChatEntryCallback.call(this, entryDiv, text, origin);
             }
