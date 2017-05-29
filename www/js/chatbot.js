@@ -302,7 +302,7 @@ var ChatBot = function () {
             if (origin == "human") { ChatBot.setHumanName(name); } else { ChatBot.setBotName(name); }
         },
         setAllowedPatterns: function (arr) {
-            allowedPatterns = arr;
+            if ($.isArray(arr)) { allowedPatterns = arr; } else { allowedPatterns = []; }  
         },
         getAllowedPatterns: function () {
             return allowedPatterns;
