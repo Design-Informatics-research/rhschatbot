@@ -110,7 +110,11 @@ var app = {
 
     //Insert saved chat
     chatbotDb.logs(function(rows){ 
-      $.each(rows, function(i,entry){ console.log(entry); ChatBot.addChatEntry(entry.text,entry.origin); });
+      $.each(rows, function(i,entry){
+        ChatBot.addChatEntry(entry.text,entry.origin);
+        ChatBot.setOriginName(entry.origin, entry.originName);
+        //ChatBot.setAllowedPatterns();
+      });
       setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 2000); 
     });
   }
@@ -129,7 +133,7 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       $("html, body").animate({ scrollTop: $(document).height() }, "slow");
-      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
+      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin), ChatBot.getAllowedPatterns());
       return false;
     }
   };
@@ -208,7 +212,7 @@ TODO:
 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
-Add state data to responses, ie: { humanName: "", allowedResponses: [] }
+Add state data to responses, ie: { allowedResponses: [] }
 'Respond with picture' option
 Actual convo
 

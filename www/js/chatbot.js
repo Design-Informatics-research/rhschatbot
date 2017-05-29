@@ -298,6 +298,9 @@ var ChatBot = function () {
                 return origin;
             }
         },
+        setOriginName: function (origin,name) {
+            if (origin == "human") { ChatBot.setHumanName(name); } else { ChatBot.setBotName(name); }
+        },
         setAllowedPatterns: function (arr) {
             allowedPatterns = arr;
         },
