@@ -86,8 +86,9 @@ function loadSavedChat(){
     setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
   });
 
-  chatbotDb.allowedPatterns(function(rows){ 
-    ChatBot.setAllowedPatterns(rows);
+  chatbotDb.lastState(function(state){
+    ChatBot.setAllowedPatterns(state.allowedPatterns);
+    ChatBot.addSetResponses(state.setResponses);
   });
 }
 
@@ -142,8 +143,9 @@ var setupChatBot = function(){
       setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);                  
 
       if (origin == "bot") {
-        chatbotDb.saveAllowedPatterns(ChatBot.getAllowedPatterns());
+        chatbotDb.saveState(ChatBot.getAllowedPatterns(), ChatBot.getSetResponses());
       }
+      
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
       return false;
     }
@@ -213,6 +215,8 @@ TODO:
 Fix sheep message interruption of thread 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
+Run last pattern callback from loaded responses
+
 Help button response
 'Respond with picture' option
 Actual convo
