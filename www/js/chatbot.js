@@ -262,11 +262,7 @@ var ChatBot = function () {
 
             // disable send if nothing in area
             $(inputs).keyup(function(){
-                if ($.trim($(inputs).val()).length < 1) {
-                    $(sendBtns).addClass('disabled');
-                } else {
-                    $(sendBtns).removeClass('disabled');
-                }
+                ChatBot.checkInput();
             });
 
             // listen for send on defined field
@@ -279,6 +275,13 @@ var ChatBot = function () {
                 }
             });
 
+        },
+        checkInput: function(){
+            if ($.trim($(inputs).val()).length < 1) {
+                $(sendBtns).addClass('disabled');
+            } else {
+                $(sendBtns).removeClass('disabled');
+            }
         },
         inThread: function() {
             return allowedPatterns.length > 0;
@@ -479,9 +482,11 @@ var ChatBot = function () {
                 $(sr).click(function(){
                     $('.setResponse').remove();
                     $(inputs).val(setResponse);
+                    $(sendBtns).removeClass('disabled');
                     $(sendBtns).click();
                     $(inputs).show();
                     $(sendBtns).show();
+                    ChatBot.checkInput();
                 });
             });
         }
