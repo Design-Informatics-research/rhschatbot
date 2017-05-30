@@ -467,9 +467,13 @@ var ChatBot = function () {
             this.addPatternObject(obj);
         },
         getSetResponses: function(){
-            return $('a.setResponse').map(function(i,e){ return e.text; }); 
+            var sr = [];
+            $('a.setResponse').each(function(i,e){ sr.push(e.text); }); 
+            return sr;
         },
         addSetResponses: function(setResponses, elementId) {
+            if ((setResponses == undefined) || (setResponses.length == 0)){ return false; }
+            
             if (elementId == undefined) { elementId = '#response-space' }
             $(inputs).hide();
             $(sendBtns).hide();

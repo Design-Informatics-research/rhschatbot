@@ -57,8 +57,8 @@ var checkNearSite = function(position){
     
     if (nearby){
       ChatBot.setAllowedPatterns(["confirm-location"]);
-      ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       ChatBot.addSetResponses(["Yes", "No"]);
+      ChatBot.addChatEntry("Oh, it looks like you're near " + site.name + ", is that right?", "bot");
       return false;
     } else {
       return true;
@@ -77,7 +77,7 @@ function onPicFail(message) {
 }
 
 function loadSavedChat(){
-  chatbotDb.logs(function(rows){ 
+  chatbotDb.logs(function(rows){
     $.each(rows, function(i,entry){
       var entryDiv = ChatBot.addChatContent(entry.text,entry.origin);
       $(entryDiv).show();
@@ -145,7 +145,7 @@ var setupChatBot = function(){
       if (origin == "bot") {
         chatbotDb.saveState(ChatBot.getAllowedPatterns(), ChatBot.getSetResponses());
       }
-      
+
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
       return false;
     }
