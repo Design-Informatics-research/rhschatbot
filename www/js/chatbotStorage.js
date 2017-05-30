@@ -9,9 +9,9 @@ var chatbotDb = (function () {
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin, originName)', [], 
           function(){ console.log("LOGS table created"); }, 
           function(){ console.log("Couldn't created LOGS table"); });
-        tx.executeSql('CREATE TABLE IF NOT EXISTS ALLOWED_PATTERNS (name)', [], 
-          function(){ console.log("ALLOWED_PATTERNS table created"); }, 
-          function(){ console.log("Couldn't created ALLOWED_PATTERNS table"); });
+        tx.executeSql('CREATE TABLE IF NOT EXISTS STATE (allowedPatterns, setResponses)', [], 
+          function(){ console.log("STATE table created"); }, 
+          function(){ console.log("Couldn't created STATE table"); });
       });
     },
 
@@ -20,9 +20,9 @@ var chatbotDb = (function () {
         tx.executeSql("DROP TABLE LOGS", [], 
           function(){ console.log("Dropped table LOGS"); }, 
           function(){ console.log("Couldn't drop table LOGS");  });
-        tx.executeSql("DROP TABLE ALLOWED_PATTERNS", [], 
-          function(){ console.log("Dropped table ALLOWED_PATTERNS"); }, 
-          function(){ console.log("Couldn't drop table ALLOWED_PATTERNS");  
+        tx.executeSql("DROP TABLE STATE", [], 
+          function(){ console.log("Dropped table STATE"); }, 
+          function(){ console.log("Couldn't drop table STATE");  
         });
       }, function(){ console.log("Couldn't reset"); }, function(){ chatbotDb.migrate(); });
     },
@@ -35,31 +35,20 @@ var chatbotDb = (function () {
       });
     },
 
-    insertAllowedPattern: function(name) {
+    saveState: function(allowedPatterns, setResponses) {
       db.transaction(function (tx) {
-        tx.executeSql('INSERT INTO ALLOWED_PATTERNS (name) VALUES (?)', [name], 
+        try { allowedPatterns = allowedPatterns.join() } catch(e){}
+        try { setResponses = setResponses.join() } catch(e){}
+        tx.executeSql('INSERT INTO STATE (allowedPatterns, setResponses) VALUES (?, ?)', [allowedPatterns, setResponses], 
           function(tx,results){},
           function(tx, error){ console.log(error); } );
       });
     },
 
-    deleteAllowedPatterns: function(cb){
+    deleteState: function(cb){
       db.transaction(function (tx) {
-        tx.executeSql('DELETE FROM ALLOWED_PATTERNS', [], 
+        tx.executeSql('DELETE FROM STATE', [], 
           function(tx,results){ /*if (cb) { cb() }*/ },
-          function(tx, error){ console.log(error); } );
-      });
-    },
-
-    saveAllowedPatterns: function(allowedPatterns) {
-      db.transaction(function (tx) {
-        tx.executeSql('DELETE FROM ALLOWED_PATTERNS', [], 
-          function(tx,results){
-            var i;
-            for (i = 0; i < allowedPatterns.length; i++){
-              chatbotDb.insertAllowedPattern(allowedPatterns[i]);
-            }
-          },
           function(tx, error){ console.log(error); } );
       });
     },
@@ -77,15 +66,30 @@ var chatbotDb = (function () {
       });
     },
 
-    allowedPatterns: function(cb){
+    states: function(cb){
       db.transaction(function (tx) {
-        tx.executeSql('SELECT * FROM ALLOWED_PATTERNS', [], function (tx, results) {
+        tx.executeSql('SELECT * FROM STATE', [], function (tx, results) {
           var rows = [];
           var i;
           for (i = 0; i < results.rows.length; i++){
-            rows.push(results.rows.item(i).name);
+            rows.push(results.rows.item(i));
           }
-          cb(rows);
+          cb(rows);          
+        }, null);
+      });
+    },
+
+    lastState: function(cb){
+      db.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM STATE', [], function (tx, results) {
+          var ls = { allowedPatterns: [], setResponses: [] };
+          var lastItem;
+          if (results.rows.length > 0){
+            lastItem = results.rows.item(results.rows.length-1);
+            if (lastItem.allowedPatterns.length > 0) { ls.allowedPatterns = lastItem.allowedPatterns.split(","); }
+            if (lastItem.setResponses.length > 0) { ls.setResponses = lastItem.setResponses.split(","); }
+          }
+          cb(ls)
         }, null);
       });
     },
@@ -102,8 +106,8 @@ var chatbotDb = (function () {
       });
     },
 
-    printAllowedPatterns: function() {
-      chatbotDb.allowedPatterns(function(rows){ console.log(rows) });
+    printStates: function() {
+      chatbotDb.states(function(rows){ console.log(rows) });
     }
 
   }
