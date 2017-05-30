@@ -463,6 +463,9 @@ var ChatBot = function () {
 
             this.addPatternObject(obj);
         },
+        getSetResponses: function(){
+            return $('a.setResponse').map(function(i,e){ return e.text; }); 
+        },
         addSetResponses: function(setResponses, elementId) {
             if (elementId == undefined) { elementId = '#response-space' }
             $(inputs).hide();
