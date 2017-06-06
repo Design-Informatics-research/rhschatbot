@@ -28,4 +28,5 @@
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="show photos youve taken" />
     </plugin>
     <plugin name="cordova-plugin-whitelist" spec="1" />
+    <plugin name="cordova-plugin-file" spec="^4.3.3" />
 </widget>
