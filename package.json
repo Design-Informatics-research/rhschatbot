@@ -21,6 +21,7 @@
         "cordova-plugin-camera": "^2.4.1",
         "cordova-plugin-file": "^4.3.3",
         "cordova-plugin-itunesfilesharing": "0.0.1",
-        "cordova-plugin-whitelist": "1"
+        "cordova-plugin-whitelist": "1",
+        "io.phasr.cordova.plugin.itunesfilesharing": "~0.0.1"
     }
 }
