@@ -224,4 +224,12 @@ Convo content
 Admin page / magic word
 CSV download
 
+
+Content: 
+
+- Espark area
+- Aberdeenshire area
+- Scotland Larder live
+- wildcard?
+
 */
