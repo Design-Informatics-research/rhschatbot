@@ -82,3 +82,8 @@ input:focus {
   outline: none;
 }
 
+
+.adminpanel .button { 
+  float:none;
+  text-decoration: none;
+}

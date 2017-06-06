@@ -155,9 +155,9 @@ var setupChatBot = function(){
   
   ChatBot.setBotName("RHSBot");
 
-  ChatBot.addPattern("^bye$", "response", "See you later buddy", undefined, "Say 'Bye' to end the conversation.");
-  
-  ChatBot.addPattern("(what is the )?meaning of life", "response", "42", undefined, "Say 'What is the meaning of life' to get the answer.");
+  ChatBot.addPattern("^adminpanel$", "response", undefined, function(matches){
+    window.location = "admin.html";
+  });
   
   ChatBot.addPattern("compute ([0-9]+) plus ([0-9]+)", "response", undefined, function (matches) {
     ChatBot.addChatEntry("That would be "+(1*matches[1]+1*matches[2])+".","bot");
@@ -215,10 +215,13 @@ TODO:
 Fix sheep message interruption of thread 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix my name is vs / <name> response
-Run last pattern callback from loaded responses
+Fix non-scrolling / partially hidden responses (low priority)
+
 
 Help button response
 'Respond with picture' option
-Actual convo
+Convo content
+Admin page / magic word
+CSV download
 
 */
