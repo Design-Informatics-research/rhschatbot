@@ -1,21 +1,29 @@
-var createFile = function(filename){
-  window.requestFileSystem(window.TEMPORARY, 5 * 1024 * 1024, function (fs) {
-    console.log('file system open: ' + fs.name);
-    openFile(fs.root, filename, false);
-  }, function(e){ console.log("Error loading filesystem "+e); });
+var readFile = function(fileEntry) {
+  fileEntry.file(function (file) {
+    var reader = new FileReader();
+    reader.onloadend = function() {
+      console.log("Successful file read: " + this.result);
+      displayFileData(fileEntry.fullPath + ": " + this.result);
+    };
+    reader.readAsText(file);
+  }, function(e){ console.log("Error reading file "+ e)});
 };
 
-var openFile = function(dirEntry, fileName, isAppend) {
-  dirEntry.getFile(fileName, {create: true, exclusive: false}, function(fileEntry) {
-    writeFile(fileEntry, null, isAppend);
-  }, function(e){ console.log("Error loading filesystem "+e); });
+var createFile = function(filename){
+  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs) {
+    console.log('file system open: ' + fs.name);
+    fs.root.getFile(filename, { create: true, exclusive: false }, function (fileEntry) {
+      console.log("fileEntry is file?" + fileEntry.isFile.toString());
+      writeFile(fileEntry, null);
+    }, function(e){ console.log("Error creating file "+e); });
 };
 
 var writeFile = function(fileEntry, dataObj) {
   fileEntry.createWriter(function (fileWriter) {
 
     fileWriter.onwriteend = function() {
-      console.log("Successful file write...");
+      console.log("Successful file write");
+      readFile(fileEntry);
     };
 
     fileWriter.onerror = function (e) {
@@ -31,6 +39,7 @@ var writeFile = function(fileEntry, dataObj) {
     fileWriter.write(dataObj);
   });
 };
+
 
 $(document).ready(function(){
 
