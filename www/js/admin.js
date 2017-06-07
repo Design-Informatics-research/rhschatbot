@@ -1,26 +1,32 @@
 function showFile(filePath){
+  console.log("adding a link");
   var a = document.createElement('a');
-  a.textContent = 'My file';
+  a.textContent = 'Log file';
   a.href = filePath;
+  a.id = "dlfile";
   document.body.appendChild(a);
+
+  $('#dlfile').click(function(e){
+    e.stopPropagation();
+    window.open(filePath, '_system');
+  });
 };
 
 var readFile = function(fileEntry) {
   fileEntry.file(function (file) {
     var reader = new FileReader();
     reader.onloadend = function() {
-      console.log(fileEntry.fullPath + ": " + this.result);
-      showFile(fileEntry.fullPath);
+      console.log(file);
+      showFile(file.localURL);
     };
     reader.readAsText(file);
   }, function(e){ console.log("Error reading file "+ e)});
 };
 
 var writeFile = function(fileEntry, dataObj) {
-  fileEntry.createWriter(function (fileWriter) {
+  fileEntry.createWriter(function(fileWriter) {
 
     fileWriter.onwriteend = function() {
-      console.log("Successful file write");
       readFile(fileEntry);
     };
 
@@ -29,26 +35,36 @@ var writeFile = function(fileEntry, dataObj) {
     };
 
     if (!dataObj) {
-      dataObj = new Blob(['some file data', 'again some more data'], { type: 'text/csv' });
+      dataObj = new Blob(['some file data\n', 'again some more data'], { type: 'text/csv' });
     }
 
     fileWriter.write(dataObj);
   });
 };
 
-var createFile = function(filename, filedata){
-  var openFile = function(fs){   
-    fs.root.getFile(filename, { create: true, exclusive: false },
+var createFile = function(directory, filename, filedata){
+  
+  var openFile = function(dirEntry){
+    console.log("dirEntry");
+    console.log(dirEntry);
+
+    dirEntry.getFile(filename, { create: true, exclusive: false },
       function (fileEntry) {
         console.log("fileEntry is file?" + fileEntry.isFile.toString());
         writeFile(fileEntry, null);
-      }, 
+      },
       function(e){ 
         console.log("Error opening file"); 
     });
   };
 
-  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, openFile, function(e){ console.log("Error creating file "+e); });
+  var getDirectory = function(fs){
+    fs.root.getDirectory(directory, {create:true}, openFile, function(){ console.log("couldnt find directory"); });
+  };
+
+  window.resolveLocalFileSystemURL(directory, openFile);
+
+  //window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getDirectory, function(e){ console.log("Error getting filesystem "+e); });
 };
 
 $(document).ready(function(){
@@ -73,11 +89,13 @@ $(document).ready(function(){
     if (confirm("Do you want to clear the logs?")){ 
       chatbotDb.reset();
     }
-   e.preventDefault();
+    e.preventDefault();
   });
 
   $('#downloadLogs').click(function(e){
-    createFile('hello.txt');
+    var dir = cordova.file.documentsDirectory;
+    if (device.platform == "Android"){ dir = cordova.file.externalDataDirectory; }
+    createFile(dir, 'logfile.csv');
     e.preventDefault();
   });
 
