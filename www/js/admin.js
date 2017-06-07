@@ -23,7 +23,7 @@ var readFile = function(fileEntry) {
   }, function(e){ console.log("Error reading file "+ e)});
 };
 
-var writeFile = function(fileEntry, dataObj) {
+var writeFile = function(fileEntry, fileData) {
   fileEntry.createWriter(function(fileWriter) {
 
     fileWriter.onwriteend = function() {
@@ -35,23 +35,20 @@ var writeFile = function(fileEntry, dataObj) {
     };
 
     if (!dataObj) {
-      dataObj = new Blob(['some file data\n', 'again some more data'], { type: 'text/csv' });
+      dataObj = new Blob(fileData, { type: 'text/csv' });
     }
 
     fileWriter.write(dataObj);
   });
 };
 
-var createFile = function(directory, filename, filedata){
+var createFile = function(directory, filename, fileData){
   
   var openFile = function(dirEntry){
-    console.log("dirEntry");
-    console.log(dirEntry);
-
     dirEntry.getFile(filename, { create: true, exclusive: false },
       function (fileEntry) {
         console.log("fileEntry is file?" + fileEntry.isFile.toString());
-        writeFile(fileEntry, null);
+        writeFile(fileEntry, fileData);
       },
       function(e){ 
         console.log("Error opening file"); 
@@ -95,7 +92,15 @@ $(document).ready(function(){
   $('#downloadLogs').click(function(e){
     var dir = cordova.file.documentsDirectory;
     if (device.platform == "Android"){ dir = cordova.file.externalDataDirectory; }
-    createFile(dir, 'logfile.csv');
+
+    chatbotDb.logs(function(rows){
+      var csvStr = ([timestamp, text, origin, originName].join(",")+"\n");
+      $.each(rows, function(idx, row){ 
+        csvStr += ([row.timestamp, row.text, row.origin, row.originName].join(",")+"\n");
+      });
+      createFile(dir, 'logfile-'+(new Date-0)+'.csv', [csvStr]);
+    });
+    
     e.preventDefault();
   });
 
