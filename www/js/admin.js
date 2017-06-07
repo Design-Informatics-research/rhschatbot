@@ -3,13 +3,8 @@ function showFile(filePath){
   var a = document.createElement('a');
   a.textContent = 'Log file';
   a.href = filePath;
-  a.id = "dlfile";
+  a.download='';
   document.body.appendChild(a);
-
-  $('#dlfile').click(function(e){
-    e.stopPropagation();
-    window.open(filePath, '_system');
-  });
 };
 
 var readFile = function(fileEntry) {
@@ -34,11 +29,11 @@ var writeFile = function(fileEntry, fileData) {
       console.log("Failed file write: " + e.toString());
     };
 
-    if (!dataObj) {
-      dataObj = new Blob(fileData, { type: 'text/csv' });
+    if (!fileData) {
+      fileData = new Blob(fileData, { type: 'text/csv' });
     }
 
-    fileWriter.write(dataObj);
+    fileWriter.write(fileData);
   });
 };
 
@@ -60,8 +55,6 @@ var createFile = function(directory, filename, fileData){
   };
 
   window.resolveLocalFileSystemURL(directory, openFile);
-
-  //window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, getDirectory, function(e){ console.log("Error getting filesystem "+e); });
 };
 
 $(document).ready(function(){
@@ -94,13 +87,13 @@ $(document).ready(function(){
     if (device.platform == "Android"){ dir = cordova.file.externalDataDirectory; }
 
     chatbotDb.logs(function(rows){
-      var csvStr = ([timestamp, text, origin, originName].join(",")+"\n");
+      var csvStr = (["timestamp", "text", "origin", "originName"].join(",")+"\n");
       $.each(rows, function(idx, row){ 
-        csvStr += ([row.timestamp, row.text, row.origin, row.originName].join(",")+"\n");
+        csvStr += ([row.timestamp, '"'+row.text+'"', row.origin, row.originName].join(",")+"\n");
       });
-      createFile(dir, 'logfile-'+(new Date-0)+'.csv', [csvStr]);
+      createFile(dir, 'logfile-'+(new Date-0)+'.csv', csvStr);
     });
-    
+
     e.preventDefault();
   });
 

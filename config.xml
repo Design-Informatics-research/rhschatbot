@@ -28,8 +28,8 @@
         <variable name="CAMERA_USAGE_DESCRIPTION" value="take pictures to document your journey" />
         <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="show photos youve taken" />
     </plugin>
+    <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-file" spec="^4.3.3" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="io.phasr.cordova.plugin.itunesfilesharing" spec="~0.0.1" />
-    <plugin name="cordova-plugin-device" spec="^1.1.6" />
 </widget>
