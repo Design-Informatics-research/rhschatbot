@@ -1,8 +1,16 @@
+function showFile(filePath){
+  var a = document.createElement('a');
+  a.textContent = 'My file';
+  a.href = filePath;
+  document.body.appendChild(a);
+};
+
 var readFile = function(fileEntry) {
   fileEntry.file(function (file) {
     var reader = new FileReader();
     reader.onloadend = function() {
-      console.log("Successful file read: " + this.result);
+      console.log(fileEntry.fullPath + ": " + this.result);
+      showFile(fileEntry.fullPath);
     };
     reader.readAsText(file);
   }, function(e){ console.log("Error reading file "+ e)});
@@ -20,19 +28,17 @@ var writeFile = function(fileEntry, dataObj) {
       console.log("Failed file write: " + e.toString());
     };
 
-    // If data object is not passed in,
-    // create a new Blob instead.
     if (!dataObj) {
-      dataObj = new Blob(['some file data'], { type: 'text/plain' });
+      dataObj = new Blob(['some file data', 'again some more data'], { type: 'text/csv' });
     }
 
     fileWriter.write(dataObj);
   });
 };
 
-var createFile = function(filename){
+var createFile = function(filename, filedata){
   var openFile = function(fs){   
-    fs.root.getFile(filename, { create: true, exclusive: false }, 
+    fs.root.getFile(filename, { create: true, exclusive: false },
       function (fileEntry) {
         console.log("fileEntry is file?" + fileEntry.isFile.toString());
         writeFile(fileEntry, null);
@@ -41,6 +47,7 @@ var createFile = function(filename){
         console.log("Error opening file"); 
     });
   };
+
   window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, openFile, function(e){ console.log("Error creating file "+e); });
 };
 
