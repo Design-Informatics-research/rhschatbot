@@ -221,9 +221,6 @@ Fix non-scrolling / partially hidden responses (low priority)
 Help button response
 'Respond with picture' option
 Convo content
-Admin page / magic word
-CSV download
-
 
 Content: 
 
