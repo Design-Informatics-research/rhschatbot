@@ -14,7 +14,8 @@
             },
             "cordova-plugin-file": {},
             "io.phasr.cordova.plugin.itunesfilesharing": {},
-            "cordova-plugin-device": {}
+            "cordova-plugin-device": {},
+            "cordova-plugin-x-socialsharing": {}
         }
     },
     "dependencies": {
@@ -24,6 +25,8 @@
         "cordova-plugin-file": "^4.3.3",
         "cordova-plugin-itunesfilesharing": "0.0.1",
         "cordova-plugin-whitelist": "1",
+        "cordova-plugin-x-socialsharing": "^5.1.8",
+        "es6-promise-plugin": "^4.1.0",
         "io.phasr.cordova.plugin.itunesfilesharing": "~0.0.1"
     }
 }

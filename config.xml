@@ -32,4 +32,5 @@
     <plugin name="cordova-plugin-file" spec="^4.3.3" />
     <plugin name="cordova-plugin-whitelist" spec="1" />
     <plugin name="io.phasr.cordova.plugin.itunesfilesharing" spec="~0.0.1" />
+    <plugin name="cordova-plugin-x-socialsharing" spec="^5.1.8" />
 </widget>

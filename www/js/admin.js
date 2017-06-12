@@ -98,3 +98,5 @@ $(document).ready(function(){
   });
 
 });
+
+//TODO: Try out cordova-plugin-socialsharing  
