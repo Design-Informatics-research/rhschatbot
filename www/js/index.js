@@ -94,6 +94,7 @@ function loadSavedChat(){
 
 var app = {
   initialize: function() {
+    chatbotDb.migrate();
     document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
     document.addEventListener("resume", this.onResume.bind(this), false);
     document.addEventListener("pause", this.onPause.bind(this), false);
