@@ -156,60 +156,73 @@ var setupChatBot = function(){
   
   ChatBot.setBotName("RHSBot");
 
-  ChatBot.addPattern("^adminpanel$", "response", undefined, function(matches){
-    window.location = "admin.html";
+  ChatBot.addPatternObject({
+    regexp: "^adminpanel$",
+    callback: function(matches){ window.location = "admin.html"; }
   });
   
-  ChatBot.addPattern("compute ([0-9]+) plus ([0-9]+)", "response", undefined, function (matches) {
-    ChatBot.addChatEntry("That would be "+(1*matches[1]+1*matches[2])+".","bot");
-  },"Say 'compute [number] plus [number]' to make the bot your math monkey");
+  ChatBot.addPatternObject({
+    regexp: "^location$",
+    callback: function (matches) {
+      navigator.geolocation.getCurrentPosition(function(position){
+        ChatBot.addChatEntry(buildLocationString(position),"bot");
+      }, positionError, geolocationOptions);    
+    }
+  });
 
-  ChatBot.addPattern("location", "response", undefined, function (matches) {
-    navigator.geolocation.getCurrentPosition(function(position){ 
-      ChatBot.addChatEntry(buildLocationString(position),"bot");
-    }, positionError, geolocationOptions);    
-  },"Say 'location' to check lat lng location");
-
-  // Hi
-
-  ChatBot.addPattern("^hi$", "response", undefined, 
-    function (matches) { 
-      ChatBot.addChatEntry("Hi there, what's your name?","bot");
-    }, "Say 'hi' to get started.", undefined, ["name"]);
-
-  // Start image capture
-  ChatBot.addPattern("^picture$", "response", undefined, 
-    function (matches) {
+  ChatBot.addPatternObject({
+    regexp: "^picture$",
+    callback: function (matches) {
       ChatBot.addChatEntry("OK, take a picture!","bot");
       navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50, saveToPhotoAlbum: true, destinationType: Camera.DestinationType.FILE_URI });
-    });
+    }
+  });
 
-  //Rory
+  ChatBot.addPatternObject({
+    regexp: "^hi$",
+    callback: function (matches) { ChatBot.addChatEntry("Hi there, what's your name?","bot"); },
+    allowedPatterns: ["name"]
+  });
 
-  ChatBot.addPattern("(?:(?:my name is|I'm|I am) (.*))|(.*)", "response", undefined, 
-    function (matches) {
+  ChatBot.addPatternObject({
+    regexp: "(?:(?:my name is|I'm|I am) (.*))|(.*)",
+    callback: function (matches) {
       var name = matches[1];
       if (name == undefined){ name = matches[2]; }
       ChatBot.setHumanName(name);
       this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
-    }, undefined, "name", ["activity"]);
+    },
+    allowedPatterns: ["activity"],
+    threadId: "name"
+  });
 
   //I'm going to see animals
 
-  ChatBot.addPattern("(.*?)", "response", "Great, where are you going first?", 
-    undefined, undefined, "activity", ["first-visit"]);
+  ChatBot.addPatternObject({
+    regexp: "(.*?)",
+    actionValue: "Great, where are you going first?",
+    allowedPatterns: ["first-visit"],
+    threadId: "activity"
+  });
 
   // To the sheep.
 
-  ChatBot.addPattern("(.*?)", "response", "OK, let me know when you get there!", 
-    undefined, undefined, "first-visit", undefined);
+  ChatBot.addPatternObject({
+    regexp: "(.*?)",
+    actionValue: "OK, let me know when you get there!",
+    allowedPatterns: [],
+    threadId: "first-visit"
+  });
 
   //End of thread.
 
-  ChatBot.addPattern("(Yes|No)", "response", "OK - go and take a look!", 
-    function (matches) {
-      console.log("matches: "); console.log(matches);
-    }, undefined, "confirm-location", undefined);
+  ChatBot.addPatternObject({
+    regexp: "(Yes|No)",
+    actionValue: "OK - go and take a look!",
+    callback: function (matches) { console.log("matches: "); console.log(matches); },
+    allowedPatterns: [],
+    threadId: "confirm-location"
+  });
 
 };
 
@@ -219,9 +232,7 @@ TODO:
 
 Fix sheep message interruption of thread 
 Fix matching with new line values e.g. "My name \n is XYZ"
-Fix my name is vs / <name> response
 Fix non-scrolling / partially hidden responses (low priority)
-
 
 Help button response
 'Respond with picture' option

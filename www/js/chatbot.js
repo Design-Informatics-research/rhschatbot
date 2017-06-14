@@ -361,9 +361,9 @@ var ChatBot = function () {
         patternAllowed: function (pattern) {
             var allowed = true;
             if (ChatBot.inThread()){ 
-                allowed = allowedPatterns.includes(pattern.id);
+                allowed = allowedPatterns.includes(pattern.threadId);
             } else {
-                allowed = (pattern.id == undefined);
+                allowed = (pattern.threadId == undefined);
             }
             return allowed;
         },
@@ -379,7 +379,7 @@ var ChatBot = function () {
                 
                 var r = new RegExp(pattern.regexp, "i");
                 var matches = text.match(r);
-                //console.log(matches);
+                
                 if (matches) {
                     switch (pattern.actionKey) {
                         case 'rewrite':
@@ -409,7 +409,7 @@ var ChatBot = function () {
                             return;
                     }
                     break;
-                }
+                } else { console.log("No matches for " + pattern.regexp + " against " + text); }
             }
 
             if (!ChatBot.inThread()) {
@@ -448,19 +448,20 @@ var ChatBot = function () {
             return true;
         },
         addPatternObject: function (obj) {
+            if (obj.allowedPatterns == undefined) { obj.allowedPatterns = []; }
+            if (obj.actionKey == undefined) { obj.actionKey = "response"; }
+            console.log(obj);
             patterns.push(obj);
             updateCommandDescription();
         },
-        addPattern: function (regexp, actionKey, actionValue, callback, description, id, allowedPatterns) {
-            if (allowedPatterns == undefined) { allowedPatterns = []; }
-
+        addPattern: function (regexp, actionKey, actionValue, callback, description, threadId, allowedPatterns) {
             var obj = {
                 regexp: regexp,
                 actionKey: actionKey,
                 actionValue: actionValue,
                 description: description,
                 callback: callback,
-                id: id,
+                threadId: threadId,
                 allowedPatterns: allowedPatterns
             };
 
