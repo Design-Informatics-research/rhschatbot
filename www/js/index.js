@@ -186,9 +186,13 @@ var setupChatBot = function(){
 
   //Rory
 
-  ChatBot.addPattern("(?:my name is|I'm|I am) (.*)", "response", "Hi $1, what are you planning to do today?", 
-    function (matches) { ChatBot.setHumanName(matches[1]); },
-    "Say 'My name is [your name]' or 'I am [name]' to be called that by the bot", "name", ["activity"]);
+  ChatBot.addPattern("(?:(?:my name is|I'm|I am) (.*))|(.*)", "response", undefined, 
+    function (matches) {
+      var name = matches[1];
+      if (name == undefined){ name = matches[2]; }
+      ChatBot.setHumanName(name);
+      this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
+    }, undefined, "name", ["activity"]);
 
   //I'm going to see animals
 
