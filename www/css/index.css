@@ -82,8 +82,14 @@ input:focus {
   outline: none;
 }
 
+body.adminpanel div.content {
+  width:98%;
+  padding:1%;
+}
 
 .adminpanel .button { 
   float:none;
   text-decoration: none;
 }
+
+.adminpanel ul li { margin-bottom:5px; }
