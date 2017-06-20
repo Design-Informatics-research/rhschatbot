@@ -39,11 +39,21 @@ var between = function(n, a, b) {
   return (n - a) * (n - b) <= 0
 };
 
-var sites = [{
-  name: 'the sheep',
-  latitude: 55.94121,
-  longitude: -3.37395
-}];
+var sites = [
+  {
+    name: 'E-Spark area',
+    location: 'by the RBS Bank Branch near Ingliston House'
+  },{
+    name: 'Aberdeenshire Village',
+    location: 'on 7th Avenue'
+  },{
+    name: 'Scotland\'s Larder Live',
+    location: 'on 13th Avenue'
+  }
+];
+
+var currentSite;
+var sitesVisited = [];
 
 var checkNearSite = function(position){
   logPosition(position);
@@ -113,7 +123,7 @@ var app = {
 
   onResume: function () {
     console.log('onresume');
-    navigator.geolocation.getCurrentPosition(checkNearSite, positionError, geolocationOptions);
+    //navigator.geolocation.getCurrentPosition(checkNearSite, positionError, geolocationOptions);
   },
 
   onPause: function () {
@@ -137,6 +147,20 @@ var app = {
     });
 
     loadSavedChat();
+  }
+};
+
+var nextSite = function(){
+  if (sitesVisited.length == sites.length) {
+    //no more sites
+    ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?");
+    ChatBot.addSetResponses("Yes I do", "No, I'm done");
+  } else {
+    $.each(sites, function(i,site){
+      if (!(sitesVisited.includes(site.name))){ currentSite = site; return false; }
+    });
+    ChatBot.addChatEntry("Please visit " + currentSite.name + " " + currentSite.location + " and let me know when you get there","bot");
+    ChatBot.addSetResponses(["I'm here", "I got distracted"]);
   }
 };
 
@@ -169,7 +193,8 @@ var setupChatBot = function(){
 
   ChatBot.addPatternObject({
     regexp: "^adminpanel$",
-    callback: function(matches){ window.location = "admin.html"; }
+    callback: function(matches){ window.location = "admin.html"; },
+    threadId: "adminpanel"
   });
   
   ChatBot.addPatternObject({
@@ -197,7 +222,7 @@ var setupChatBot = function(){
       ChatBot.setHumanName(name);
       this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
     },
-    allowedPatterns: ["activity"],
+    allowedPatterns: ["adminpanel", "activity"],
     threadId: "name"
   });
 
@@ -206,7 +231,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Great, where are you going first?",
-    allowedPatterns: ["first-visit"],
+    allowedPatterns: ["adminpanel", "first-visit"],
     threadId: "activity"
   });
 
@@ -216,58 +241,185 @@ var setupChatBot = function(){
     regexp: "(.*?)",
     actionValue: "OK, let me know when you get there!",
     callback: function(){ ChatBot.addSetResponses(["I'm here", "I got distracted"]); },
-    allowedPatterns: ["experience"],
+    allowedPatterns: ["adminpanel", "distracted", "arrived"],
     threadId: "first-visit"
   });
 
-  //Distracted / I'm here
+  //Distracted
 
   ChatBot.addPatternObject({
-    regexp: "I got distracted|I'm here",
+    regexp: "I got distracted",
     actionValue: "What's happening there? Take a picture and/or tell me about it.",
     callback: function(){ /* picture btn / result */ },
-    allowedPatterns: ["anything-else"],
-    threadId: "experience"
+    allowedPatterns: ["adminpanel", "anything-else"],
+    threadId: "distracted"
   });
 
-  // <user experience>
+  // I'm here
+
+  ChatBot.addPatternObject({
+    regexp: "I'm here",
+    actionValue: "What's happening there? Take a picture and/or tell me about it.",
+    callback: function(){ /* picture btn / result */ },
+    allowedPatterns: ["adminpanel", "anything-else"],
+    threadId: "arrived"
+  });
+
+  //<user experience>
 
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Anything else you'd like to add?",
     callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
-    allowedPatterns: ["else-yes", "else-no"],
+    allowedPatterns: ["adminpanel", "else-yes", "else-no"],
     threadId: "anything-else"
   });
 
-  // yes - more to add
+  //Yes - more to add
 
   ChatBot.addPatternObject({
     regexp: "Yes",
     actionValue: "Oh? Take a picture and/or tell me about it.",
     callback: function(){ /* picture btn / result */ },
-    allowedPatterns: ["anything-else"],
+    allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "else-yes"
   });
 
-  //no - move on
+  //No - move on
 
   ChatBot.addPatternObject({
     regexp: "No",
-    actionValue: "OK, let's move on.",
-    callback: function(){ /* add area suggestion */ },
-    allowedPatterns: [],
+    actionValue: "Thanks, let's move on.",
+    callback: nextSite,
+    allowedPatterns: ["adminpanel", "distracted", "site-arrived", "finished-study", "finished-study-thoughts"],
     threadId: "else-no"
   });
 
-  //End of thread.
+  // I'm here
 
   ChatBot.addPatternObject({
-    regexp: "(Yes|No)",
-    actionValue: "OK - go and take a look!",
-    callback: function (matches) { console.log("matches: "); console.log(matches); },
+    regexp: "I'm here",
+    actionValue: "Great, what's going on?",
+    callback: function(){ 
+      sitesVisited.push(currentSite.name);
+      ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
+    },
+    allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
+    threadId: "site-arrived"
+  });
+
+  // I x something
+
+  ChatBot.addPatternObject({
+    regexp: "I learned something",
+    actionValue: "What did you learn? What was your interest?",
+    allowedPatterns: ["adminpanel", "site-anything-else"],
+    threadId: "learned"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "I bought something",
+    actionValue: "What did you buy and why?",
+    allowedPatterns: ["adminpanel", "site-anything-else"],
+    threadId: "bought"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "I enjoyed something",
+    actionValue: "What was enjoyable and why?",
+    allowedPatterns: ["adminpanel", "site-anything-else"],
+    threadId: "enjoyed"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "I tried something",
+    actionValue: "What did you learn? What was your interest?",
+    allowedPatterns: ["adminpanel", "site-anything-else"],
+    threadId: "tried"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "I didn't like something",
+    actionValue: "What didn't you like and why?",
+    allowedPatterns: ["adminpanel", "site-anything-else"],
+    threadId: "disliked"
+  });
+
+  //Site Anything Else
+
+  ChatBot.addPatternObject({
+    regexp: "(.*?)",
+    actionValue: "Anything else you'd like to add?",
+    callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
+    allowedPatterns: ["adminpanel", "site-else-yes", "site-else-no"],
+    threadId: "site-anything-else"
+  });
+
+  //Site Anything Else - Yes
+
+  ChatBot.addPatternObject({
+    regexp: "Yes",
+    actionValue: "What else happened?",
+    callback: function(){ 
+      ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
+    },
+    allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
+    threadId: "site-else-yes"
+  });
+
+  //Site Anything Else - No
+
+  ChatBot.addPatternObject({
+    regexp: "No",
+    actionValue: "Are you finished in this area?",
+    callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
+    allowedPatterns: ["adminpanel", "finished-area", "not-finished-area"],
+    threadId: "site-else-no"
+  });
+
+  //Finished in area
+
+  ChatBot.addPatternObject({
+    regexp: "Yes",
+    actionValue: "OK, let's move on.",
+    callback: nextSite,
+    allowedPatterns: ["adminpanel", "distracted", "site-arrived", "finished-study", "finished-study-thoughts"],
+    threadId: "finished-area"
+  });
+
+  //Not finished in area
+
+  ChatBot.addPatternObject({
+    regexp: "No",
+    actionValue: "OK. Tell me more about what's going on.",
+    callback: function(){ 
+      ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
+    },
+    allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
+    threadId: "not-finished-area"
+  });
+
+  // Outro
+
+  ChatBot.addPatternObject({
+    regexp: "Yes I do",
+    actionValue: "Ok, feel free to mention any aspect of today.",
+    allowedPatterns: ["adminpanel", "finished-study-comment"],
+    threadId: "finished-study-thoughts"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "No, I'm done",
+    actionValue: "Thanks, please return this phone to the researchers.",
     allowedPatterns: [],
-    threadId: "confirm-location"
+    threadId: "finished-study"
+  });
+
+  ChatBot.addPatternObject({
+    regexp: "(.*?)",
+    actionValue: "Thanks, please return this phone to the researchers.",
+    allowedPatterns: [],
+    threadId: "finished-study-comment"
   });
 
 };
@@ -291,7 +443,7 @@ Content:
 - Area orders: 1st is the same, then other two are different
 - Outro (triggers after last event)
 
--------------------
+---
 
 Area questions
 
@@ -301,7 +453,7 @@ I enjoyed something
 I learned something
 I bought something
 
---
+---
 
 What didn't you like and why? [pic/text] - Anything else?  
 What did you buy and why? [pic/text] - Anything else?
@@ -309,7 +461,7 @@ What did you learn? and what was your interest in it? [pic/text] - Anything else
 What was enjoyable and why? [pic/text] - Anything else?
 What did you try and how was it? - [pic/text] - Anything else?
 
---
+---
 
 Anything else? - [yes/no] 
   no: Are you finished in this <area>? 

@@ -473,13 +473,10 @@ var ChatBot = function () {
         },
         addSetResponses: function(setResponses, elementId) {
             if ((setResponses == undefined) || (setResponses.length == 0)){ return false; }
-            
             if (elementId == undefined) { elementId = '#response-space' }
-            $(inputs).hide();
-            $(sendBtns).hide();
+
             $('.setResponse').remove();
             var sr;
-
             $.each(setResponses, function(idx, setResponse){
                 sr = $('<a class="setResponse rCountOf'+setResponses.length+'" href="#">'+setResponse+'</a>');
                 $(elementId).append(sr);
@@ -487,12 +484,15 @@ var ChatBot = function () {
                     $('.setResponse').remove();
                     $(inputs).val(setResponse);
                     $(sendBtns).removeClass('disabled');
-                    $(sendBtns).click();
                     $(inputs).show();
                     $(sendBtns).show();
+                    $(sendBtns).click();
                     ChatBot.checkInput();
                 });
             });
+
+            $(inputs).hide();
+            $(sendBtns).hide();
         }
     }
 }();
