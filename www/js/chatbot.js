@@ -360,7 +360,7 @@ var ChatBot = function () {
 
         patternAllowed: function (pattern) {
             var allowed = true;
-            if (ChatBot.inThread()){ 
+            if (ChatBot.inThread()){
                 allowed = allowedPatterns.includes(pattern.threadId);
             } else {
                 allowed = (pattern.threadId == undefined);
@@ -450,7 +450,6 @@ var ChatBot = function () {
         addPatternObject: function (obj) {
             if (obj.allowedPatterns == undefined) { obj.allowedPatterns = []; }
             if (obj.actionKey == undefined) { obj.actionKey = "response"; }
-            console.log(obj);
             patterns.push(obj);
             updateCommandDescription();
         },

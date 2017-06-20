@@ -68,6 +68,12 @@ var checkNearSite = function(position){
 
 var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
+var startChatting = function(){
+  ChatBot.addChatEntry("Hi, I'm the RHSBot, I'll be helping you record your experiences at the Royal Highland Show today.", 'bot')
+  ChatBot.addChatEntry("Let's get started. What's your name?", 'bot');
+  ChatBot.setAllowedPatterns(["name"]);
+};
+
 function onPicSuccess(imageURL) {
   ChatBot.addChatEntry('<img class="" src="'+imageURL+'" />',"human");
 }
@@ -83,13 +89,18 @@ function loadSavedChat(){
       $(entryDiv).show();
       ChatBot.setOriginName(entry.origin, entry.originName);
     });
-    setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
-  });
+    
+    if (rows.length == 0){ 
+      startChatting(); 
+    } else {
+      chatbotDb.lastState(function(state){
+          ChatBot.setAllowedPatterns(state.allowedPatterns);
+          ChatBot.addSetResponses(state.setResponses);
+        });
+    }
 
-  chatbotDb.lastState(function(state){
-    ChatBot.setAllowedPatterns(state.allowedPatterns);
-    ChatBot.addSetResponses(state.setResponses);
-  });
+    setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
+  }); 
 }
 
 var app = {
@@ -179,12 +190,6 @@ var setupChatBot = function(){
   });
 
   ChatBot.addPatternObject({
-    regexp: "^hi$",
-    callback: function (matches) { ChatBot.addChatEntry("Hi there, what's your name?","bot"); },
-    allowedPatterns: ["name"]
-  });
-
-  ChatBot.addPatternObject({
     regexp: "(?:(?:my name is|I'm|I am) (.*))|(.*)",
     callback: function (matches) {
       var name = matches[1];
@@ -210,8 +215,49 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "OK, let me know when you get there!",
-    allowedPatterns: [],
+    callback: function(){ ChatBot.addSetResponses(["I'm here", "I got distracted"]); },
+    allowedPatterns: ["experience"],
     threadId: "first-visit"
+  });
+
+  //Distracted / I'm here
+
+  ChatBot.addPatternObject({
+    regexp: "I got distracted|I'm here",
+    actionValue: "What's happening there? Take a picture and/or tell me about it.",
+    callback: function(){ /* picture btn / result */ },
+    allowedPatterns: ["anything-else"],
+    threadId: "experience"
+  });
+
+  // <user experience>
+
+  ChatBot.addPatternObject({
+    regexp: "(.*?)",
+    actionValue: "Anything else you'd like to add?",
+    callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
+    allowedPatterns: ["else-yes", "else-no"],
+    threadId: "anything-else"
+  });
+
+  // yes - more to add
+
+  ChatBot.addPatternObject({
+    regexp: "Yes",
+    actionValue: "Oh? Take a picture and/or tell me about it.",
+    callback: function(){ /* picture btn / result */ },
+    allowedPatterns: ["anything-else"],
+    threadId: "else-yes"
+  });
+
+  //no - move on
+
+  ChatBot.addPatternObject({
+    regexp: "No",
+    actionValue: "OK, let's move on.",
+    callback: function(){ /* add area suggestion */ },
+    allowedPatterns: [],
+    threadId: "else-no"
   });
 
   //End of thread.
@@ -230,7 +276,6 @@ var setupChatBot = function(){
 
 TODO:
 
-Fix sheep message interruption of thread 
 Fix matching with new line values e.g. "My name \n is XYZ"
 Fix non-scrolling / partially hidden responses (low priority)
 
@@ -243,6 +288,38 @@ Content:
 - Espark area
 - Aberdeenshire area
 - Scotland Larder live
-- wildcard?
+- Area orders: 1st is the same, then other two are different
+- Outro (triggers after last event)
+
+-------------------
+
+Area questions
+
+I tried something
+I didn't like something 
+I enjoyed something
+I learned something
+I bought something
+
+--
+
+What didn't you like and why? [pic/text] - Anything else?  
+What did you buy and why? [pic/text] - Anything else?
+What did you learn? and what was your interest in it? [pic/text] - Anything else?
+What was enjoyable and why? [pic/text] - Anything else?
+What did you try and how was it? - [pic/text] - Anything else?
+
+--
+
+Anything else? - [yes/no] 
+  no: Are you finished in this <area>? 
+    no: return to <area> choices, yes: suggest next place
+  yes: Loop back to area questions
+
+---
+
+Outro: Great thanks for helping! Do you have anything else to add about your experience today? 
+[answer]
+Thanks for that. Please return this phone back to the researchers.
 
 */
