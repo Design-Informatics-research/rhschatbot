@@ -120,6 +120,8 @@ var findPattern = function(threadId) {
 
 function loadSavedChat(){
   chatbotDb.logs(function(rows){
+    console.log("Loading from db, rows: " + rows.length);
+
     $.each(rows, function(i,entry){
       var entryDiv = ChatBot.addChatContent(entry.text,entry.origin);
       $(entryDiv).show();
@@ -130,13 +132,10 @@ function loadSavedChat(){
       startChatting();
     } else {
       chatbotDb.lastState(function(threadId, vSites){
-          console.log("loading visited sites " + vSites.join());
           sitesVisited = vSites;
           if (threadId){
-            console.log("loading last threadId " + threadId);
             var pattern = findPattern(threadId);
             if ((pattern) && (pattern.callback)) {
-              console.log("running pattern cb"); console.log(pattern);
               ChatBot.setAllowedPatterns(pattern.allowedPatterns);
               pattern.callback();
             }
@@ -193,9 +192,20 @@ var nextSite = function(){
     ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?", "bot");
     ChatBot.addSetResponses("Yes I do", "No, I'm done");
   } else {
+    
+    console.log("Checking sites visited");
+    console.log(sitesVisited);
+
     $.each(sites, function(i,site){
-      if (!(sitesVisited.includes(site.name))){ currentSite = site; return false; }
+      console.log(site.name);
+      if (sitesVisited.includes(site.name)) {
+        console.log("site has been visited");
+      } else {
+        console.log("move to site");
+        currentSite = site; return false;
+      }
     });
+
     ChatBot.addChatEntry("Please visit " + currentSite.name + " " + currentSite.location + " and let me know when you get there","bot");
     ChatBot.addSetResponses(["I'm here", "I got distracted"]);
   }
@@ -227,6 +237,11 @@ var setupChatBot = function(){
   ChatBot.init(config);
   
   ChatBot.setBotName("RHSBot");
+
+  ChatBot.addPatternObject({
+    regexp: "^database$",
+    callback: function(){ chatbotDb.printLogs() }
+  });
 
   ChatBot.addPatternObject({
     regexp: "^adminpanel$",
@@ -344,7 +359,7 @@ var setupChatBot = function(){
     actionValue: "Great, what's going on?",
     callback: function(){
       disablePhotos();
-      sitesVisited.push(currentSite.name);
+      if (currentSite){ sitesVisited.push(currentSite.name); }
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },
     allowedPatterns: ["adminpanel","learned","bought","enjoyed","tried","disliked"],

@@ -89,7 +89,7 @@ var chatbotDb = (function () {
 
           var visitedSites = [];
           if (lastItem.visitedSites.length > 0) {
-            visitedSites = lastItem.visitedSites.split();
+            visitedSites = lastItem.visitedSites.split(",");
           }
 
           cb(lastItem.threadId, visitedSites);
