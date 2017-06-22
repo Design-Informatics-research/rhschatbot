@@ -123,14 +123,12 @@ var startChatting = function(){
 };
 
 function onPicSuccess(imageURL) {
-  ChatBot.addChatEntry('<img class="" src="'+imageURL+'" />',"human");
-  
-  window.resolveLocalFileSystemURL(imageURL, 
-    function success(fileEntry) {
-    // writeFile(fileEntry, imgUri);
+  window.resolveLocalFileSystemURL(imageURL, function (fileEntry) {
     console.log("got file: " + fileEntry.fullPath);
-    // displayFileData(fileEntry.nativeURL, "Native URL");
-  }, function () { console.log("resolve local fail"); });
+    ChatBot.addChatEntry('<img class="" name="'+fileEntry.fullPath+'" src="'+imageURL+'" />',"human");
+  }, function () { 
+    ChatBot.addChatEntry('<img class="" src="'+imageURL+'" />',"human");
+  });
 }
 
 function onPicFail(message) {
