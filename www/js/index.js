@@ -198,8 +198,8 @@ var nextSite = function(){
   disablePhotos();
   if (sitesVisited.length == sites.length) {
     //no more sites
-    ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?", "bot");
-    ChatBot.addSetResponses("Yes I do", "No, I'm done");
+    ChatBot.addChatEntry("Great, thanks for helping with this study. Do you want add anything about your experiences today?", "bot");
+    ChatBot.addSetResponses(["Yes I do", "No, I'm done"]);
   } else {
     
     console.log("Checking sites visited");
@@ -492,7 +492,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "Yes I do",
     actionValue: "Ok, feel free to mention any aspect of today.",
-    callback: function(){ disablePhotos(); },
+    callback: function(){ navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions); enablePhotos(); },
     allowedPatterns: ["adminpanel", "finished-study-comment"],
     threadId: "finished-study-thoughts"
   });
@@ -501,7 +501,7 @@ var setupChatBot = function(){
     regexp: "No, I'm done",
     actionValue: "Thanks, please return this phone to the researchers.",
     callback: function(){ navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions); disablePhotos(); },
-    allowedPatterns: [],
+    allowedPatterns: ["adminpanel", "database"],
     threadId: "finished-study"
   });
 
@@ -509,7 +509,7 @@ var setupChatBot = function(){
     regexp: "(.*?)",
     actionValue: "Thanks, please return this phone to the researchers.",
     callback: function(){ disablePhotos(); },
-    allowedPatterns: [],
+    allowedPatterns: ["adminpanel", "database"],
     threadId: "finished-study-comment"
   });
 
