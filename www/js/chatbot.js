@@ -486,6 +486,8 @@ var ChatBot = function () {
                     $(sendBtns).removeClass('disabled');
                     $(inputs).show();
                     $(sendBtns).show();
+                    $('#takePhoto').show();
+                    
                     $(sendBtns).click();
                     ChatBot.checkInput();
                 });
@@ -493,6 +495,7 @@ var ChatBot = function () {
 
             $(inputs).hide();
             $(sendBtns).hide();
+            $('#takePhoto').hide();
         }
     }
 }();

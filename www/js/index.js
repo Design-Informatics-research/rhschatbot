@@ -13,6 +13,16 @@ $(document).ready(function(){
   }); */
 
   setupChatBot();
+  
+  $('#takePhoto').click(function(){
+    if (!$(this).hasClass('disabled')){
+      navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50, saveToPhotoAlbum: true, destinationType: Camera.DestinationType.FILE_URI });
+    } else {
+      console.log("Take photo disabled");
+      return false;
+    }
+  });
+
   app.initialize();
 });
 
@@ -37,6 +47,14 @@ var positionError = function(error) {
 
 var between = function(n, a, b) {
   return (n - a) * (n - b) <= 0
+};
+
+var enablePhotos = function(){
+  $('#takePhoto').removeClass('disabled');
+};
+
+var disablePhotos = function(){
+  $('#takePhoto').addClass('disabled');
 };
 
 var sites = [
@@ -81,7 +99,7 @@ var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy:
 var startChatting = function(){
   ChatBot.addChatEntry("Hi, I'm the RHSBot, I'll be helping you record your experiences at the Royal Highland Show today.", 'bot')
   ChatBot.addChatEntry("Let's get started. What's your name?", 'bot');
-  ChatBot.setAllowedPatterns(["name"]);
+  ChatBot.setAllowedPatterns(["adminpanel","name"]);
 };
 
 function onPicSuccess(imageURL) {
@@ -104,6 +122,8 @@ function loadSavedChat(){
       startChatting(); 
     } else {
       chatbotDb.lastState(function(state){
+          console.log("loading state");
+          console.log(state);
           ChatBot.setAllowedPatterns(state.allowedPatterns);
           ChatBot.addSetResponses(state.setResponses);
         });
@@ -151,6 +171,7 @@ var app = {
 };
 
 var nextSite = function(){
+  disablePhotos();
   if (sitesVisited.length == sites.length) {
     //no more sites
     ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?", "bot");
@@ -176,7 +197,7 @@ var setupChatBot = function(){
 
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
-      setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);                  
+      setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
 
       if (origin == "bot") {
         chatbotDb.saveState(ChatBot.getAllowedPatterns(), ChatBot.getSetResponses());
@@ -193,7 +214,7 @@ var setupChatBot = function(){
 
   ChatBot.addPatternObject({
     regexp: "^adminpanel$",
-    callback: function(matches){ window.location = "admin.html"; },
+    callback: function(matches){ disablePhotos(); window.location = "admin.html"; },
     threadId: "adminpanel"
   });
   
@@ -210,7 +231,7 @@ var setupChatBot = function(){
     regexp: "^picture$",
     callback: function (matches) {
       ChatBot.addChatEntry("OK, take a picture!","bot");
-      navigator.camera.getPicture(onPicSuccess, onPicFail, { quality: 50, saveToPhotoAlbum: true, destinationType: Camera.DestinationType.FILE_URI });
+      enablePhotos();
     }
   });
 
@@ -231,6 +252,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Great, where are you going first?",
+    callback: function(){ disablePhotos(); },
     allowedPatterns: ["adminpanel", "first-visit"],
     threadId: "activity"
   });
@@ -240,7 +262,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "OK, let me know when you get there!",
-    callback: function(){ ChatBot.addSetResponses(["I'm here", "I got distracted"]); },
+    callback: function(){ disablePhotos(); ChatBot.addSetResponses(["I'm here", "I got distracted"]); },
     allowedPatterns: ["adminpanel", "distracted", "arrived"],
     threadId: "first-visit"
   });
@@ -250,7 +272,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I got distracted",
     actionValue: "What's happening there? Take a picture and/or tell me about it.",
-    callback: function(){ /* picture btn / result */ },
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "distracted"
   });
@@ -260,7 +282,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I'm here",
     actionValue: "What's happening there? Take a picture and/or tell me about it.",
-    callback: function(){ /* picture btn / result */ },
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "arrived"
   });
@@ -270,7 +292,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Anything else you'd like to add?",
-    callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
+    callback: function(){ disablePhotos(); ChatBot.addSetResponses(["Yes", "No"]); },
     allowedPatterns: ["adminpanel", "else-yes", "else-no"],
     threadId: "anything-else"
   });
@@ -280,7 +302,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "Yes",
     actionValue: "Oh? Take a picture and/or tell me about it.",
-    callback: function(){ /* picture btn / result */ },
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "else-yes"
   });
@@ -300,7 +322,8 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I'm here",
     actionValue: "Great, what's going on?",
-    callback: function(){ 
+    callback: function(){
+      disablePhotos();
       sitesVisited.push(currentSite.name);
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },
@@ -313,6 +336,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I learned something",
     actionValue: "What did you learn? What was your interest?",
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "learned"
   });
@@ -320,6 +344,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I bought something",
     actionValue: "What did you buy and why?",
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "bought"
   });
@@ -327,6 +352,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I enjoyed something",
     actionValue: "What was enjoyable and why?",
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "enjoyed"
   });
@@ -334,6 +360,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I tried something",
     actionValue: "What did you try? How was it?",
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "tried"
   });
@@ -341,6 +368,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I didn't like something",
     actionValue: "What didn't you like and why?",
+    callback: function(){ enablePhotos(); },
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "disliked"
   });
@@ -350,7 +378,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Anything else you'd like to add?",
-    callback: function(){ ChatBot.addSetResponses(["Yes", "No"]); },
+    callback: function(){ disablePhotos(); ChatBot.addSetResponses(["Yes", "No"]); },
     allowedPatterns: ["adminpanel", "site-else-yes", "site-else-no"],
     threadId: "site-anything-else"
   });
@@ -361,6 +389,7 @@ var setupChatBot = function(){
     regexp: "Yes",
     actionValue: "What else happened?",
     callback: function(){ 
+      disablePhotos();
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },
     allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
@@ -404,6 +433,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "Yes I do",
     actionValue: "Ok, feel free to mention any aspect of today.",
+    callback: function(){ disablePhotos(); },
     allowedPatterns: ["adminpanel", "finished-study-comment"],
     threadId: "finished-study-thoughts"
   });
@@ -411,6 +441,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "No, I'm done",
     actionValue: "Thanks, please return this phone to the researchers.",
+    callback: function(){ disablePhotos(); },
     allowedPatterns: [],
     threadId: "finished-study"
   });
@@ -418,6 +449,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Thanks, please return this phone to the researchers.",
+    callback: function(){ disablePhotos(); },
     allowedPatterns: [],
     threadId: "finished-study-comment"
   });
@@ -433,45 +465,5 @@ Fix non-scrolling / partially hidden responses (low priority)
 
 Help button response
 'Respond with picture' option
-Convo content
-
-Content: 
-
-- Espark area
-- Aberdeenshire area
-- Scotland Larder live
-- Area orders: 1st is the same, then other two are different
-- Outro (triggers after last event)
-
----
-
-Area questions
-
-I tried something
-I didn't like something 
-I enjoyed something
-I learned something
-I bought something
-
----
-
-What didn't you like and why? [pic/text] - Anything else?  
-What did you buy and why? [pic/text] - Anything else?
-What did you learn? and what was your interest in it? [pic/text] - Anything else?
-What was enjoyable and why? [pic/text] - Anything else?
-What did you try and how was it? - [pic/text] - Anything else?
-
----
-
-Anything else? - [yes/no] 
-  no: Are you finished in this <area>? 
-    no: return to <area> choices, yes: suggest next place
-  yes: Loop back to area questions
-
----
-
-Outro: Great thanks for helping! Do you have anything else to add about your experience today? 
-[answer]
-Thanks for that. Please return this phone back to the researchers.
 
 */

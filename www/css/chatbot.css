@@ -42,11 +42,6 @@ body {
   width: 50%;
 }
 
-div#send.disabled, .button.disabled {
-  background-color: silver;
-  color: #fff;
-}
-
 .chatBotChatEntry .imgBox .actions {
   position: absolute;
   display: none;
@@ -126,11 +121,11 @@ div#send.disabled, .button.disabled {
   }
 }
 
-#chatContainer { margin-bottom: 19vh; }
+#chatContainer { margin-bottom: 21vh; }
 
 #response-container {
   /*background-color: #ffffff;*/
-  height: 16.6vh;
+  height: 20vh;
   width: 100%;
   position: fixed;
   bottom: 0px;
@@ -145,7 +140,7 @@ div#send.disabled, .button.disabled {
 #response-space {
   /*background-color: #ffffff;*/
   padding:1vw;
-  padding-top: 6px;
+  padding-top: 1vh;
   line-height: 1.4em;
   font: 13px helvetica,arial,freesans,clean,sans-serif;
   color: black;
@@ -156,15 +151,6 @@ div#send.disabled, .button.disabled {
   font-size: 14px;
   border: 1px solid #ddd;
   width: 90%;
-}
-
-.button, .setResponse {
-  display: inline-block;
-  background-color: darkcyan;
-  color: #fff;
-  padding: 8px;
-  cursor: pointer;
-  float: right;
 }
 
 #chatBotCommandDescription {
@@ -214,21 +200,39 @@ div#send.disabled, .button.disabled {
 }
 
 textarea#humanInput { 
-  width: 73.5vw;
+  width: 56vw;
   font-size: 1.2em;
   padding: 1vh 1.5vw;
   margin-left: 0.5vw;
-  height: 7vh;
+  height: 12vh;
   margin-top: 1.3vh;
 }
 
-div#send {
+div#takePhoto {  }
+
+div#send, div#takePhoto {
   text-align: center;
   padding: 0.9vh 5vw 0vh 5vw;
-  font-size: 3.2em;
+  font-size: 3.0em;
   border-radius: 3px;
-  margin-right: 0.5vw;
+  margin-right: 1vw;
   margin-top: 1.2vh;
+}
+
+div#takePicture.disabled, 
+div#send.disabled, 
+.button.disabled {
+  background-color: silver;
+  color: #fff;
+}
+
+.button, .setResponse {
+  display: inline-block;
+  background-color: darkcyan;
+  color: #fff;
+  padding: 8px;
+  cursor: pointer;
+  float: right;
 }
 
 .setResponse { 
@@ -245,13 +249,13 @@ div#send {
   margin-right: 0.5vw;
   margin-bottom: 3px;
   margin-left: 0.5vw;
-  margin-top: ;
 }
 
 .setResponse.rCountOf1 { width: 90.0vw; }
 .setResponse.rCountOf2 { width: 45.4vw; }
 .setResponse.rCountOf3 { width: 29vw; }
 .setResponse.rCountOf4 { width: 45.4vw; margin-top:0px; }
+.setResponse.rCountOf5 { width: 45.4vw; margin-top: 0px; padding: 1.4vh 1.3vw; font-size: 1em; }
 
 @media (max-width: 491px) {
   .setResponse {}
