@@ -260,3 +260,7 @@ div#send.disabled,
 @media (max-width: 491px) {
   .setResponse {}
 }
+
+#response-container.fixfixed {
+  position: absolute;
+}

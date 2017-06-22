@@ -268,6 +268,12 @@ var ChatBot = function () {
                 ChatBot.checkInput();
             });
 
+            $(inputs).on('focus', 'input', function(){
+                $('#response-container').addClass('fixfixed');
+            }).on('blur', 'input', function(){
+                $('#response-container').addClass('fixfixed');
+            });
+
             // listen for send on defined field
             var submission;
             $(sendBtns).click(function(e) {
@@ -509,6 +515,7 @@ var ChatBot = function () {
 
             $(inputs).hide();
             $(sendBtns).hide();
+            $(inputs).blur();
             $('#takePhoto').hide();
         }
     }

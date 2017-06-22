@@ -125,7 +125,7 @@ var startChatting = function(){
 function onPicSuccess(imageURL) {
   ChatBot.addChatEntry('<img class="" src="'+imageURL+'" />',"human");
   
-  window.resolveLocalFileSystemURL(imgUri, 
+  window.resolveLocalFileSystemURL(imageURL, 
     function success(fileEntry) {
     // writeFile(fileEntry, imgUri);
     console.log("got file: " + fileEntry.fullPath);
