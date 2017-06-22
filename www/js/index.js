@@ -129,14 +129,14 @@ function loadSavedChat(){
     if (rows.length == 0){
       startChatting();
     } else {
-      chatbotDb.lastState(function(threadId){
+      chatbotDb.lastState(function(threadId, vSites){
           console.log("loading last state");
           if (threadId){
             var pattern = findPattern(threadId);
             if ((pattern) && (pattern.callback)) {
-              console.log("running pattern cb"); 
-              console.log(pattern);
+              console.log("running pattern cb"); console.log(pattern);
               ChatBot.setAllowedPatterns(pattern.allowedPatterns);
+              sitesVisited = vSites;
               pattern.callback();
             }
           }
@@ -217,7 +217,7 @@ var setupChatBot = function(){
       if (origin == "bot") {
         console.log("Saving state");
         console.log(ChatBot.getThreadId());
-        chatbotDb.saveState(ChatBot.getThreadId()); 
+        chatbotDb.saveState(ChatBot.getThreadId(), sitesVisited); 
       } else {
         //chatbotDb.saveState("human");
       }

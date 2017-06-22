@@ -9,7 +9,7 @@ var chatbotDb = (function () {
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin, originName)', [], 
           function(){ console.log("LOGS table created"); }, 
           function(){ console.log("Couldn't created LOGS table"); });
-        tx.executeSql('CREATE TABLE IF NOT EXISTS STATE (threadId)', [], 
+        tx.executeSql('CREATE TABLE IF NOT EXISTS STATE (threadId, visitedSites)', [], 
           function(){ console.log("STATE table created"); }, 
           function(){ console.log("Couldn't created STATE table"); });
       });
@@ -35,11 +35,11 @@ var chatbotDb = (function () {
       });
     },
 
-    saveState: function(threadId) {
+    saveState: function(threadId, visitedSites) {
       db.transaction(function (tx) {
         try { allowedPatterns = allowedPatterns.join() } catch(e){}
         try { setResponses = setResponses.join() } catch(e){}
-        tx.executeSql('INSERT INTO STATE (threadId) VALUES (?)', [threadId], 
+        tx.executeSql('INSERT INTO STATE (threadId, visitedSites) VALUES (?, ?)', [threadId, visitedSites.join(",")], 
           function(tx,results){},
           function(tx, error){ console.log(error); } );
       });
@@ -74,7 +74,7 @@ var chatbotDb = (function () {
           for (i = 0; i < results.rows.length; i++){
             rows.push(results.rows.item(i));
           }
-          cb(rows);          
+          cb(rows);
         }, null);
       });
     },
@@ -86,7 +86,13 @@ var chatbotDb = (function () {
           if (results.rows.length > 0){
             lastItem = results.rows.item(results.rows.length-1);
           }
-          cb(lastItem.threadId);
+
+          var visitedSites = [];
+          if (lastItem.visitedSites.length > 0) {
+            visitedSites = lastItem.visitedSites.split();
+          }
+
+          cb(lastItem.threadId, visitedSites);
         }, null);
       });
     },
