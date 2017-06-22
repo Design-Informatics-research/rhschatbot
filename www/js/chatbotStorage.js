@@ -84,15 +84,11 @@ var chatbotDb = (function () {
       db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM STATE', [], function (tx, results) {
           var lastItem;
-          if (results.rows.length > 0){
-            lastItem = results.rows.item(results.rows.length-1);
-          }
-
           var visitedSites = [];
-          if (lastItem.visitedSites.length > 0) {
-            visitedSites = lastItem.visitedSites.split(",");
+          if (results.rows.length > 0){
+            lastItem = results.rows.item(results.rows.length-1);           
+            if (lastItem.visitedSites.length > 0) { visitedSites = lastItem.visitedSites.split(","); }
           }
-
           cb(lastItem.threadId, visitedSites);
         }, null);
       });
