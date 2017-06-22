@@ -200,7 +200,7 @@ body {
 }
 
 textarea#humanInput { 
-  width: 56vw;
+  width: 55vw;
   font-size: 1.2em;
   padding: 1vh 1.5vw;
   margin-left: 0.5vw;
@@ -208,12 +208,12 @@ textarea#humanInput {
   margin-top: 1.3vh;
 }
 
-div#takePhoto {  }
+div#takePhoto {}
 
 div#send, div#takePhoto {
   text-align: center;
   padding: 0.9vh 5vw 0vh 5vw;
-  font-size: 3.0em;
+  font-size: 2.9em;
   border-radius: 3px;
   margin-right: 1vw;
   margin-top: 1.2vh;
