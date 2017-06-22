@@ -105,7 +105,7 @@ $(document).ready(function(){
   };
 
   //document.addEventListener('deviceready', onDeviceReady.bind(), false);
-  setTimeout(this.onDeviceReady, 3000);
+  setTimeout(onDeviceReady, 3000);
   document.addEventListener("resume", onResume.bind(), false);
   document.addEventListener("pause", onPause.bind(), false);
 
