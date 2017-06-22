@@ -153,7 +153,7 @@ var app = {
 var nextSite = function(){
   if (sitesVisited.length == sites.length) {
     //no more sites
-    ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?");
+    ChatBot.addChatEntry("Great, thanks for helping with this study. Do you have any final thoughts about your experiences today?", "bot");
     ChatBot.addSetResponses("Yes I do", "No, I'm done");
   } else {
     $.each(sites, function(i,site){
@@ -304,7 +304,7 @@ var setupChatBot = function(){
       sitesVisited.push(currentSite.name);
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },
-    allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
+    allowedPatterns: ["adminpanel","learned","bought","enjoyed","tried","disliked"],
     threadId: "site-arrived"
   });
 
@@ -333,7 +333,7 @@ var setupChatBot = function(){
 
   ChatBot.addPatternObject({
     regexp: "I tried something",
-    actionValue: "What did you learn? What was your interest?",
+    actionValue: "What did you try? How was it?",
     allowedPatterns: ["adminpanel", "site-anything-else"],
     threadId: "tried"
   });
