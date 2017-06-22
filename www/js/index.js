@@ -171,7 +171,8 @@ function loadSavedChat(){
 var app = {
   initialize: function() {
     chatbotDb.migrate();
-    document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    //document.addEventListener('deviceready', this.onDeviceReady.bind(this), false);
+    setTimeout(this.onDeviceReady, 3000);
     document.addEventListener("resume", this.onResume.bind(this), false);
     document.addEventListener("pause", this.onPause.bind(this), false);
   },
@@ -187,6 +188,7 @@ var app = {
 
   onDeviceReady: function() {
     console.log('deviceready');
+    $('#loadingMsg').hide();
     navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
     loadSavedChat();
   }

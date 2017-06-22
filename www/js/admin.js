@@ -91,6 +91,7 @@ $(document).ready(function(){
   
   var onDeviceReady = function(){
     console.log('deviceready');
+    $('#loadingMsg').hide();
     storageDir = cordova.file.documentsDirectory;
     if (device.platform == "Android"){ storageDir = cordova.file.externalDataDirectory; }
     listDir(storageDir);
@@ -103,7 +104,8 @@ $(document).ready(function(){
     console.log('onPause');
   };
 
-  document.addEventListener('deviceready', onDeviceReady.bind(), false);
+  //document.addEventListener('deviceready', onDeviceReady.bind(), false);
+  setTimeout(this.onDeviceReady, 3000);
   document.addEventListener("resume", onResume.bind(), false);
   document.addEventListener("pause", onPause.bind(), false);
 
