@@ -133,9 +133,10 @@ function loadSavedChat(){
           console.log("loading last state");
           if (threadId){
             var pattern = findPattern(threadId);
-            if (pattern.callback){
+            if ((pattern) && (pattern.callback)) {
               console.log("running pattern cb"); 
               console.log(pattern);
+              ChatBot.setAllowedPatterns(pattern.allowedPatterns);
               pattern.callback();
             }
           }
