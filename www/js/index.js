@@ -73,6 +73,26 @@ var sites = [
 var currentSite;
 var sitesVisited = [];
 
+var lastPosition = {
+  latitude: 0.0, 
+  longitude: 0.0,
+  accuracy: 0,
+  heading: 0,
+  speed: 0,
+  timestamp: 0
+};
+
+var updatePosition = function(position){
+  lastPosition = { 
+    latitude: position.coords.latitude, 
+    longitude: position.coords.longitude,
+    accuracy: position.coords.accuracy,
+    heading: position.coords.heading,
+    speed: position.coords.speed,
+    timestamp: position.coords.timestamp
+  }
+};
+
 var checkNearSite = function(position){
   logPosition(position);
   //TODO Skip this if it's user's first time.
@@ -158,7 +178,7 @@ var app = {
 
   onResume: function () {
     console.log('onresume');
-    //navigator.geolocation.getCurrentPosition(checkNearSite, positionError, geolocationOptions);
+    navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
   },
 
   onPause: function () {
@@ -167,20 +187,7 @@ var app = {
 
   onDeviceReady: function() {
     console.log('deviceready');
-
-    var latitude = 55.94120;
-    var longitude = -3.37396;
-    var accuracy = 1;
-    var altitude = 0;
-
-    mockGeolocation.setMock([latitude, longitude, accuracy, altitude], function(suc){
-      console.log("Mocked location: ");
-      console.log(suc);
-    }, function(err){
-      console.log("Error mocking location: ");
-      console.log(err);
-    });
-
+    navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
     loadSavedChat();
   }
 };
@@ -224,12 +231,12 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
-      
+
       if (origin == "bot") {
         chatbotDb.saveState(ChatBot.getThreadId(), sitesVisited); 
       }
 
-      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
+      chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin), lastPosition);
       return false;
     }
   };
@@ -277,6 +284,7 @@ var setupChatBot = function(){
         ChatBot.setHumanName(name);
         this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
       }
+      navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
     },
     allowedPatterns: ["adminpanel", "activity"],
     threadId: "name"
@@ -287,7 +295,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Great, where are you going first?",
-    callback: function(){ disablePhotos(); },
+    callback: function(){ disablePhotos(); navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions); },
     allowedPatterns: ["adminpanel", "first-visit"],
     threadId: "activity"
   });
@@ -297,7 +305,10 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "OK, let me know when you get there!",
-    callback: function(){ disablePhotos(); ChatBot.addSetResponses(["I'm here", "I got distracted"]); },
+    callback: function(){ 
+      disablePhotos(); 
+      ChatBot.addSetResponses(["I'm here", "I got distracted"]);
+    },
     allowedPatterns: ["adminpanel", "distracted", "arrived"],
     threadId: "first-visit"
   });
@@ -307,7 +318,10 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I got distracted",
     actionValue: "What's happening there? Take a picture and/or tell me about it.",
-    callback: function(){ enablePhotos(); },
+    callback: function(){ 
+      enablePhotos();
+      navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
+    },
     allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "distracted"
   });
@@ -317,7 +331,10 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "I'm here",
     actionValue: "What's happening there? Take a picture and/or tell me about it.",
-    callback: function(){ enablePhotos(); },
+    callback: function(){ 
+      enablePhotos();
+      navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
+    },
     allowedPatterns: ["adminpanel", "anything-else"],
     threadId: "arrived"
   });
@@ -327,7 +344,10 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(.*?)",
     actionValue: "Anything else you'd like to add?",
-    callback: function(){ disablePhotos(); ChatBot.addSetResponses(["Yes", "No"]); },
+    callback: function(){ 
+      disablePhotos(); 
+      ChatBot.addSetResponses(["Yes", "No"]); 
+    },
     allowedPatterns: ["adminpanel", "else-yes", "else-no"],
     threadId: "anything-else"
   });
@@ -358,6 +378,7 @@ var setupChatBot = function(){
     regexp: "I'm here",
     actionValue: "Great, what's going on?",
     callback: function(){
+      navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
       disablePhotos();
       if (currentSite){ sitesVisited.push(currentSite.name); }
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
@@ -456,7 +477,8 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "No",
     actionValue: "OK. Tell me more about what's going on.",
-    callback: function(){ 
+    callback: function(){
+      navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions);
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },
     allowedPatterns: ["adminpanel", "learned","bought","enjoyed","tried","disliked"],
@@ -476,7 +498,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "No, I'm done",
     actionValue: "Thanks, please return this phone to the researchers.",
-    callback: function(){ disablePhotos(); },
+    callback: function(){ navigator.geolocation.getCurrentPosition(updatePosition, positionError, geolocationOptions); disablePhotos(); },
     allowedPatterns: [],
     threadId: "finished-study"
   });

@@ -119,7 +119,7 @@ $(document).ready(function(){
     chatbotDb.logs(function(rows){
       var csvStr = (["timestamp", "text", "origin", "originName"].join(",")+"\n");
       $.each(rows, function(idx, row){ 
-        csvStr += ([row.timestamp, '"'+row.text+'"', row.origin, row.originName].join(",")+"\n");
+        csvStr += ([row.timestamp, '"'+row.text+'"', row.origin, row.originName, row.latitude, row.longitude, row.accuracy, row.heading, row.speed, row.locTimestamp].join(",")+"\n");
       });
       createFile(storageDir, 'logfile-'+(new Date-0)+'.csv', csvStr);
     });
