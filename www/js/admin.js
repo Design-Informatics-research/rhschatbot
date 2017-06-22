@@ -117,7 +117,7 @@ $(document).ready(function(){
 
   $('#downloadLogs').click(function(e){
     chatbotDb.logs(function(rows){
-      var csvStr = (["timestamp", "text", "origin", "originName"].join(",")+"\n");
+      var csvStr = (["timestamp", "text", "origin", "originName", "latitude", "longitude", "accuracy", "heading", "speed", "locTimestamp"].join(",")+"\n");
       $.each(rows, function(idx, row){ 
         csvStr += ([row.timestamp, '"'+row.text+'"', row.origin, row.originName, row.latitude, row.longitude, row.accuracy, row.heading, row.speed, row.locTimestamp].join(",")+"\n");
       });
