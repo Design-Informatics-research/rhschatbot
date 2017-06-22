@@ -133,7 +133,7 @@ function loadSavedChat(){
           console.log("loading last state");
           if (threadId){
             var pattern = findPattern(threadId);
-            if (pattern.callback){ 
+            if (pattern.callback){
               console.log("running pattern cb"); 
               console.log(pattern);
               pattern.callback();
@@ -213,7 +213,13 @@ var setupChatBot = function(){
       entryDiv.delay(200).slideDown();
       setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
       
-      if (origin == "bot") { chatbotDb.saveState(ChatBot.getThreadId()); }
+      if (origin == "bot") {
+        console.log("Saving state");
+        console.log(ChatBot.getThreadId());
+        chatbotDb.saveState(ChatBot.getThreadId()); 
+      } else {
+        //chatbotDb.saveState("human");
+      }
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
       return false;
     }
@@ -232,16 +238,18 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "^location$",
     callback: function (matches) {
-      navigator.geolocation.getCurrentPosition(function(position){
-        ChatBot.addChatEntry(buildLocationString(position),"bot");
-      }, positionError, geolocationOptions);    
+      if (matches){
+        navigator.geolocation.getCurrentPosition(function(position){
+          ChatBot.addChatEntry(buildLocationString(position),"bot");
+        }, positionError, geolocationOptions);
+      }
     }
   });
 
   ChatBot.addPatternObject({
     regexp: "^picture$",
     callback: function (matches) {
-      ChatBot.addChatEntry("OK, take a picture!","bot");
+      if (matches){ ChatBot.addChatEntry("OK, take a picture!","bot"); }
       enablePhotos();
     }
   });
@@ -249,10 +257,12 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "(?:(?:my name is|I'm|I am) (.*))|(.*)",
     callback: function (matches) {
-      var name = matches[1];
-      if (name == undefined){ name = matches[2]; }
-      ChatBot.setHumanName(name);
-      this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
+      if (matches){
+        var name = matches[1];
+        if (name == undefined){ name = matches[2]; }
+        ChatBot.setHumanName(name);
+        this.addChatEntry("Hi "+name+", what are you planning to do today?", "bot");
+      }
     },
     allowedPatterns: ["adminpanel", "activity"],
     threadId: "name"
