@@ -9,7 +9,7 @@ var chatbotDb = (function () {
         tx.executeSql('CREATE TABLE IF NOT EXISTS LOGS (timestamp unique, text, origin, originName)', [], 
           function(){ console.log("LOGS table created"); }, 
           function(){ console.log("Couldn't created LOGS table"); });
-        tx.executeSql('CREATE TABLE IF NOT EXISTS STATE (allowedPatterns, setResponses)', [], 
+        tx.executeSql('CREATE TABLE IF NOT EXISTS STATE (threadId)', [], 
           function(){ console.log("STATE table created"); }, 
           function(){ console.log("Couldn't created STATE table"); });
       });
@@ -35,11 +35,11 @@ var chatbotDb = (function () {
       });
     },
 
-    saveState: function(allowedPatterns, setResponses) {
+    saveState: function(threadId) {
       db.transaction(function (tx) {
         try { allowedPatterns = allowedPatterns.join() } catch(e){}
         try { setResponses = setResponses.join() } catch(e){}
-        tx.executeSql('INSERT INTO STATE (allowedPatterns, setResponses) VALUES (?, ?)', [allowedPatterns, setResponses], 
+        tx.executeSql('INSERT INTO STATE (threadId) VALUES (?)', [threadId], 
           function(tx,results){},
           function(tx, error){ console.log(error); } );
       });
@@ -82,14 +82,11 @@ var chatbotDb = (function () {
     lastState: function(cb){
       db.transaction(function (tx) {
         tx.executeSql('SELECT * FROM STATE', [], function (tx, results) {
-          var ls = { allowedPatterns: [], setResponses: [] };
           var lastItem;
           if (results.rows.length > 0){
             lastItem = results.rows.item(results.rows.length-1);
-            if (lastItem.allowedPatterns.length > 0) { ls.allowedPatterns = lastItem.allowedPatterns.split(","); }
-            if (lastItem.setResponses.length > 0) { ls.setResponses = lastItem.setResponses.split(","); }
           }
-          cb(ls)
+          cb(lastItem.threadId);
         }, null);
       });
     },

@@ -110,6 +110,14 @@ function onPicFail(message) {
   console.log('Failed because: ' + message);
 }
 
+var findPattern = function(threadId) {
+  var pattern = undefined;
+  $.each(ChatBot.getPatterns(), function(i,p){
+    if (p.threadId == threadId){ pattern = p; }
+  });
+  return pattern;
+};
+
 function loadSavedChat(){
   chatbotDb.logs(function(rows){
     $.each(rows, function(i,entry){
@@ -118,20 +126,26 @@ function loadSavedChat(){
       ChatBot.setOriginName(entry.origin, entry.originName);
     });
     
-    if (rows.length == 0){ 
-      startChatting(); 
+    if (rows.length == 0){
+      startChatting();
     } else {
-      chatbotDb.lastState(function(state){
-          console.log("loading state");
-          console.log(state);
-          ChatBot.setAllowedPatterns(state.allowedPatterns);
-          ChatBot.addSetResponses(state.setResponses);
+      chatbotDb.lastState(function(threadId){
+          console.log("loading last state");
+          if (threadId){
+            var pattern = findPattern(threadId);
+            if (pattern.callback){ 
+              console.log("running pattern cb"); 
+              console.log(pattern);
+              pattern.callback();
+            }
+          }
         });
     }
 
     setTimeout(function(){ $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 500); 
   }); 
 }
+
 
 var app = {
   initialize: function() {
@@ -198,11 +212,8 @@ var setupChatBot = function(){
     addChatEntryCallback: function(entryDiv, text, origin) {
       entryDiv.delay(200).slideDown();
       setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
-
-      if (origin == "bot") {
-        chatbotDb.saveState(ChatBot.getAllowedPatterns(), ChatBot.getSetResponses());
-      }
-
+      
+      if (origin == "bot") { chatbotDb.saveState(ChatBot.getThreadId()); }
       chatbotDb.insertLog(text, origin, ChatBot.getOriginName(origin));
       return false;
     }
@@ -388,7 +399,7 @@ var setupChatBot = function(){
   ChatBot.addPatternObject({
     regexp: "Yes",
     actionValue: "What else happened?",
-    callback: function(){ 
+    callback: function(){
       disablePhotos();
       ChatBot.addSetResponses(["I learned something", "I tried something", "I bought something", "I enjoyed something", "I didn't like something"]);
     },

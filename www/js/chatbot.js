@@ -37,6 +37,9 @@ var ChatBot = function () {
     //define which patterns are enabled, all are enabled if empty
     var allowedPatterns = [];
 
+    //the id of current pattern
+    var threadId;
+
     // list all the predefined commands and the commands of each engine
     function updateCommandDescription() {
         var description = '';
@@ -286,6 +289,15 @@ var ChatBot = function () {
         inThread: function() {
             return allowedPatterns.length > 0;
         },
+        getThreadId: function(){
+            return threadId;
+        },
+        getPatterns: function(){
+            return patterns;
+        },
+        setThreadId: function(id){
+            threadId = id;
+        },
         setBotName: function (name) {
             botName = name;
         },
@@ -393,7 +405,9 @@ var ChatBot = function () {
                             }
                             break;
                         case 'response':
+
                             this.setAllowedPatterns(pattern.allowedPatterns);
+                            this.setThreadId(pattern.threadId);
 
                             var response = pattern.actionValue;
                             if (response != undefined) {
