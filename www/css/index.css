@@ -18,7 +18,10 @@ body {
     color-stop(0.51, #E4E4E4)
   );
   background-attachment:fixed;
+  background-image: url("../img/backg.png");
+  
   font-family:'HelveticaNeue-Light', 'HelveticaNeue', Helvetica, Arial, sans-serif;
+
   font-size:12px;
   height:100%;
   margin:0px;
