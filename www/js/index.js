@@ -256,8 +256,10 @@ var setupChatBot = function(){
     engines: [ChatBot.Engines.duckduckgo()],
 
     addChatEntryCallback: function(entryDiv, text, origin) {
-      entryDiv.delay(200).slideDown();
-      setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
+      setTimeout(function() { 
+        entryDiv.slideDown(); 
+        $("html, body").animate({ scrollTop: $(document).height() }, "slow"); 
+      }, 300);
 
       if (origin == "bot") {
         chatbotDb.saveState(ChatBot.getThreadId(), sitesVisited); 

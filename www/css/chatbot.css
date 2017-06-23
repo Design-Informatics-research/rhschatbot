@@ -122,7 +122,7 @@ body {
   }
 }
 
-#chatContainer { margin-bottom: 21vh; }
+#chatContainer { margin-bottom: 25vh; }
 
 #response-container {
   /*background-color: #ffffff;*/
@@ -263,5 +263,9 @@ div#send.disabled,
 }
 
 #response-container.fixfixed {
+  position: absolute;
+}
+
+.fixfixed {
   position: absolute;
 }

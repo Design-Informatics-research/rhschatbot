@@ -269,9 +269,15 @@ var ChatBot = function () {
             });
 
             $(inputs).on('focus', 'input', function(){
-                $('#response-container').addClass('fixfixed');
+                setTimeout(function() {
+                   $('#response-container').removeClass('fixfixed');
+                   $('#response-container').addClass('fixfixed');   
+                }, 500);
             }).on('blur', 'input', function(){
-                $('#response-container').addClass('fixfixed');
+                setTimeout(function() {
+                   $('#response-container').removeClass('fixfixed');
+                   $('#response-container').addClass('fixfixed');   
+                }, 500);
             });
 
             // listen for send on defined field
@@ -504,11 +510,10 @@ var ChatBot = function () {
                     $('.setResponse').remove();
                     $(inputs).val(setResponse);
                     $(sendBtns).removeClass('disabled');
-                    $(inputs).show();
+                    $(sendBtns).click();
+                    $(inputs).show().blur();
                     $(sendBtns).show();
                     $('#takePhoto').show();
-                    
-                    $(sendBtns).click();
                     ChatBot.checkInput();
                 });
             });
