@@ -8,13 +8,13 @@
             "ios"
         ],
         "plugins": {
-            "cordova-plugin-whitelist": {},
             "cordova-plugin-camera": {
-                "CAMERA_USAGE_DESCRIPTION": "take pictures to document your journey",
-                "PHOTOLIBRARY_USAGE_DESCRIPTION": "show photos youve taken"
+                "CAMERA_USAGE_DESCRIPTION": " ",
+                "PHOTOLIBRARY_USAGE_DESCRIPTION": " "
             },
-            "cordova-plugin-file": {},
             "cordova-plugin-device": {},
+            "cordova-plugin-file": {},
+            "cordova-plugin-whitelist": {},
             "cordova-plugin-x-socialsharing": {}
         }
     },
