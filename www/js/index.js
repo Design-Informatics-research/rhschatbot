@@ -57,18 +57,39 @@ var disablePhotos = function(){
   $('#takePhoto').addClass('disabled');
 };
 
+var shuffle = function(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+};
+
 var sites = [
   {
-    name: 'E-Spark area',
-    location: 'by the RBS Bank Branch near Ingliston House'
+    name: 'Design Marquees',
+    location: 'on 11th Avenue'
   },{
     name: 'Aberdeenshire Village',
     location: 'on 7th Avenue'
   },{
     name: 'Scotland\'s Larder Live',
-    location: 'on 13th Avenue'
+    location: 'in Lowland Hall on 13th Avenue'
   }
 ];
+
+sites = shuffle(sites);
 
 var currentSite;
 var sitesVisited = [];
@@ -206,7 +227,6 @@ var nextSite = function(){
     ChatBot.addChatEntry("Great, thanks for helping with this study. Do you want add anything about your experiences today?", "bot");
     ChatBot.addSetResponses(["Yes I do", "No, I'm done"]);
   } else {
-    
     console.log("Checking sites visited");
     console.log(sitesVisited);
 
