@@ -504,16 +504,13 @@ var ChatBot = function () {
             $('.setResponse').remove();
             var sr;
             $.each(setResponses, function(idx, setResponse){
-                sr = $('<a class="setResponse rCountOf'+setResponses.length+'" href="#">'+setResponse+'</a>');
+                sr = $('<a class="setResponse rCountOf'+setResponses.length+'" href="#response-container">'+setResponse+'</a>');
                 $(elementId).append(sr);
                 $(sr).click(function(){
                     $('.setResponse').remove();
                     $(inputs).val(setResponse);
-                    $(sendBtns).removeClass('disabled');
-                    $(sendBtns).click();
-                    $(inputs).show().blur();
-                    $(sendBtns).show();
-                    $('#takePhoto').show();
+                    $(sendBtns).removeClass('disabled').click();
+                    $(inputs).val('');
                     ChatBot.checkInput();
                 });
             });
