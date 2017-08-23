@@ -4,3 +4,4 @@ resources/*
 results/*.html
 results/logs/*
 results/www/*
+results/processed.zip

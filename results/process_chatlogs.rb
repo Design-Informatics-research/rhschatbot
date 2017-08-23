@@ -1,13 +1,12 @@
 require 'csv'
 
-csv_files = Dir["logs/*.csv"]
+csv_files = Dir["logs/logfile-*.csv"]
 
 def change_quotations(csv_files)
   for f in csv_files
     `sed 's/,"/,|/' #{f} > #{f}.process`
     `sed 's/",/|,/' #{f}.process > #{f}`
     `rm logs/*.process`
-    `mkdir logs/processed`
   end
 end
 
@@ -20,7 +19,7 @@ for f in csv_files
     rows << row
   end
 
-  CSV.open("#{f}", "wb", quote_char: '|') do |csv|
+  CSV.open("#{f.sub('logfile-','')}", "wb", quote_char: '|') do |csv|
     rows.each {|r| csv << r }
   end
 end
