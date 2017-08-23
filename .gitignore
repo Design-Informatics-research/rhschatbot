@@ -3,3 +3,4 @@ plugins/*
 resources/*
 results/*.html
 results/logs/*
+results/www/*

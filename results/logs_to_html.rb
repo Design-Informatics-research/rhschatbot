@@ -3,12 +3,12 @@ require 'csv'
 csv_files = Dir["logs/*.csv"]
 
 @top = '<!DOCTYPE html><html><head>
-<link rel="stylesheet" type="text/css" href="../www/css/index.css" />
-<link rel="stylesheet" type="text/css" href="../www/css/chatbot.css" />
-<link rel="stylesheet" type="text/css" href="../www/css/ionicons.css" />
-<script type="text/javascript" src="../www/js/polyfills.js"></script>
-<script type="text/javascript" src="../www/js/jquery-2.2.4.min.js"></script>
-<title>RHS Chatbot</title></head><body>'
+<link rel="stylesheet" type="text/css" href="./www/css/index.css" />
+<link rel="stylesheet" type="text/css" href="./www/css/chatbot.css" />
+<link rel="stylesheet" type="text/css" href="./www/css/ionicons.css" />
+<script type="text/javascript" src="./www/js/polyfills.js"></script>
+<script type="text/javascript" src="./www/js/jquery-2.2.4.min.js"></script>
+<title>RHS Chatbot</title><style>.chatBotChatEntry { display: block; }</style></head><body>'
 @bottom = '</body></html>'
 
 def convert(csv_file)
