@@ -122,24 +122,25 @@ body {
   }
 }
 
-#chatContainer { margin-bottom: 21vh; }
+#chatContainer { margin-bottom: 5vh; }
 
 #response-container {
   /*background-color: #ffffff;*/
   height: 20vh;
-  width: 100%;
-  position: fixed;
-  bottom: 0px;
-  margin-left: auto;
-  margin-right: auto;
-  padding: 0px;
+  width: 96%;
+  padding: 0;
+  margin: 0 auto;
+  margin-top: 5vh;
+  position: relative;
   background-color: #F8F8F8;
   border: 1px solid #ccc;
   box-shadow: 0 0 10px #999;
+  border-radius: 6px;
 }
 
 #response-space {
   /*background-color: #ffffff;*/
+  position: relative;
   padding:1vw;
   padding-top: 1vh;
   line-height: 1.4em;
@@ -201,7 +202,7 @@ body {
 }
 
 textarea#humanInput { 
-  width: 55vw;
+  width: 53.5vw;
   font-size: 1.3em;
   padding: 1vh 1.5vw;
   margin-left: 0.5vw;
@@ -213,11 +214,11 @@ div#takePhoto {}
 
 div#send, div#takePhoto {
   text-align: center;
-  padding: 0.9vh 5vw 0vh 5vw;
+  padding: 0.9vh 4.6vw 0vh 4.6vw;
   font-size: 2.9em;
   border-radius: 3px;
-  margin-right: 1vw;
-  margin-top: 1.2vh;
+  margin-top: 1.3vh;
+  margin-left: 0.5vw;
 }
 
 div#takePicture.disabled, 
@@ -236,32 +237,40 @@ div#send.disabled,
   float: right;
 }
 
-.setResponse { 
-  width: 45.4vw;
+.setResponse {
+  width: 46%;
+  margin-left: 1.5%;
   margin-top: 4.9vh;
   text-align: center;
-  padding: 1.3vw;
+  padding: 1%;
   padding-top: 2vh;
   padding-bottom: 2vh;
-  font-size: 1.2em;
+  font-size: 1.3em;
   border-radius: 3px;
   float: left;
   text-decoration: none;
-  margin-right: 0.5vw;
-  margin-bottom: 3px;
-  margin-left: 0.5vw;
 }
 
-.setResponse.rCountOf1 { width: 90.0vw; }
-.setResponse.rCountOf2 { width: 44.0vw; }
-.setResponse.rCountOf3 { width: 29vw; }
-.setResponse.rCountOf4 { width: 45.4vw; margin-top:0px; }
-.setResponse.rCountOf5 { width: 45.4vw; margin-top: 0px; padding: 1.4vh 1.3vw; font-size: 1em; }
+.setResponse.rCountOf1 { width: 95%; }
+.setResponse.rCountOf2 {  }
+.setResponse.rCountOf3 { font-size: 1.2em; width: 30%; }
+.setResponse.rCountOf4 { margin-top:0px; }
+.setResponse.rCountOf5 { 
+  margin-top: 0.5vh;
+  padding: 2% 1%;
+  font-size: 1.1em;
+}
 
 @media (max-width: 491px) {
   .setResponse {}
 }
 
+/*
+
 #response-container.fixfixed {
   position: absolute;
 }
+
+.fixfixed {
+  position: absolute;
+} */

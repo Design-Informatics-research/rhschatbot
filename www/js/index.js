@@ -79,12 +79,15 @@ var shuffle = function(array) {
 var sites = [
   {
     name: 'Design Marquees',
+    description: 'These ',
     location: 'on 11th Avenue'
   },{
     name: 'Aberdeenshire Village',
+    description: 'This area features pop-up craft, and farm shops, food stalls, tourist offers, all focusing on Aberdeenshire.',
     location: 'on 7th Avenue'
   },{
     name: 'Scotland\'s Larder Live',
+    description: 'Here you can watch cooking demonstrations, find and try food from hundreds of producers.',
     location: 'in Lowland Hall on 13th Avenue'
   }
 ];
@@ -138,9 +141,10 @@ var checkNearSite = function(position){
 var geolocationOptions = { maximumAge: 30000, timeout: 6000, enableHighAccuracy: true };
 
 var startChatting = function(){
-  ChatBot.addChatEntry("Hi, I'm the RHSBot, I'll be helping you record your experiences at the Royal Highland Show today.", 'bot')
-  ChatBot.addChatEntry("Let's get started. What's your name?", 'bot');
   ChatBot.setAllowedPatterns(["adminpanel","name"]);
+  ChatBot.addChatEntry("Hi, I'm the RHSBot, I'd like you to tell me about your experiences at the Royal Highland Show today.", 'bot');
+  ChatBot.addChatEntry("In particular, I'd like to know about anything you try, buy, learn, or enjoy. Also, if anything stands out that you like or dislike.", "bot");
+  ChatBot.addChatEntry("Let's get started. What's your name?", 'bot');
 };
 
 function onPicSuccess(imageURL) {
@@ -256,8 +260,18 @@ var setupChatBot = function(){
     engines: [ChatBot.Engines.duckduckgo()],
 
     addChatEntryCallback: function(entryDiv, text, origin) {
-      entryDiv.delay(200).slideDown();
-      setTimeout(function() { $("html, body").animate({ scrollTop: $(document).height() }, "slow"); }, 300);
+
+      setTimeout(function() {
+        entryDiv.slideDown();
+      }, 500);
+
+      $(config.inputs).show().blur();
+      $(config.sendBtns).show();
+      $('#takePhoto').show();
+      
+      setTimeout(function() {
+        $("html, body").animate({ scrollTop: ($('#response-container').position().top - 300) }, "slow"); 
+      }, 800);
 
       if (origin == "bot") {
         chatbotDb.saveState(ChatBot.getThreadId(), sitesVisited); 
