@@ -5,3 +5,6 @@ results/*.html
 results/logs/*
 results/www/*
 results/processed.zip
+results/logs.zip
+results/logmaps/images
+results/logmaps/data.js

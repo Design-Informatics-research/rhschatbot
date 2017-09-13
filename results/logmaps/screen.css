@@ -1,0 +1,35 @@
+#map {
+	width: 90vw; 
+	height: 85vh; 
+	border: 1px solid #ccc;
+}
+
+#progress {
+    display: none;
+    position: absolute;
+    z-index: 1000;
+    left: 400px;
+    top: 300px;
+    width: 200px;
+    height: 20px;
+    margin-top: -20px;
+    margin-left: -100px;
+    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 4px;
+    padding: 2px;
+}
+
+#progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #76A6FC;
+    border-radius: 4px;
+}
+
+.leaflet-popup-content { width: 80vw; overflow-y: scroll; height:50vh;  }
+.leaflet-popup-content img { width: 100%; height:auto; }
+.leaflet-popup-content p { font-size:1.3em; margin:10px; }
+
+.chatbtn { margin-top:1em; display:inline-block; font-size: 1.1em; background-color: rgb(130,10,10); color:white; 
+    padding:10px; margin:5px; border-radius:3px; text-decoration: none; }

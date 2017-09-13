@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leaflet debug page</title>
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" integrity="sha512-07I2e+7D8p6he1SIM+1twR5TIrhUQn9+I6yjqD53JQjFiMf8EtC93ty0/5vJTZGF8aAocvHYNEDJajGdNx1IsQ==" crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet-src.js" integrity="sha512-WXoSHqw/t26DszhdMhOXOkI7qCiv5QWXhH9R7CgvgZMHz1ImlkVQ3uNsiQKu5wwbbxtPzFXd1hK4tzno2VqhpA==" crossorigin=""></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="screen.css" />
+  <link rel="stylesheet" href="MarkerCluster.css" />
+  <link rel="stylesheet" href="MarkerCluster.Default.css" />
+  <script src="leaflet.markercluster-src.js"></script>
+  <script src='data.js'></script>
+
+</head>
+<body>
+
+  <div id="map"></div>
+
+  <script type="text/javascript">
+
+    var tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }),
+      latlng = new L.LatLng(55.9407, -3.37134);
+
+    var map = new L.Map('map', {center: latlng, zoom: 16, layers: [tiles]});
+
+    function near(a,b) {
+      var diff = Math.abs(a - b);
+      return diff >= 0.0 && diff <= 0.001;
+    }
+
+    function populate(layer) {
+      var layersList = [];
+      var fuzzLatlng, m, sameLocation;
+      var previousLatLng = [0.0, 0.0];
+      var content = '';
+      var options = { color: 'blue', fillColor: '#bbf', fillOpacity: 0.5 };
+      var imgCount = 0;
+
+      for (var i = 0; i < layer.length; i++) {
+        fuzzLatlng = [parseFloat(layer[i].latitude), parseFloat(layer[i].longitude)];
+        
+        sameLocation = (near(previousLatLng[0], fuzzLatlng[0]) &&
+          near(previousLatLng[1], fuzzLatlng[1]));
+
+        if ((fuzzLatlng[0] == 0.0) || (fuzzLatlng[1] == 0.0)){ sameLocation = true; }
+        
+        if (i == 0){ sameLocation = false; }
+
+        if (layer[i].text.includes("<img")){
+          imgCount = imgCount + 1;
+          layer[i].text = '<img src="images/'+layer[i].originName.toLowerCase().split(" ")[0]+'/'+imgCount+'.jpg"/>';
+        }
+
+        if (sameLocation) {
+          //add to existing marker content
+          content = m.getPopup().getContent();
+          content = content + '<hr/><h3>'+layer[i].originName+'</h3><p>'+layer[i].text+'</p><p>'+layer[i].timestamp+'<i></i></p>';
+          m.getPopup().setContent(content);
+        } else {
+          if (i==0){
+            previousLatLng = fuzzLatlng; 
+            options = { color: 'green', radius: 20 }; 
+          } else {
+            options = { color: 'blue', radius: 10 };
+          }
+
+          m = new L.CircleMarker(fuzzLatlng, options);
+          console.log(m);
+          m.bindPopup('<h3>'+layer[i].originName+'</h3><p>'+layer[i].text+
+            '</p><p>'+layer[i].timestamp+'<i></i></p>', { maxWidth: 500 }).openPopup();
+
+          if (i == (layer.length-1)) { m.setStyle({color:'red'}); }
+
+          layersList.push(m);
+        }
+        previousLatLng = fuzzLatlng;
+      }
+
+      //Connect the markers with lines
+      var pathCoords = [];
+      for (var i = 0; i < layersList.length; i++) { 
+        pathCoords.push([layersList[i].getLatLng().lat,layersList[i].getLatLng().lng]);
+      }
+      var pathLine = L.polyline(pathCoords);
+      layersList.push(pathLine);
+      return new L.layerGroup(layersList);
+    }
+
+    var lg = populate(layer1);
+    lg.addTo(map);
+    
+    var mapEl = document.getElementById('map');
+
+    var chatdata = [layer1,layer2,layer3,layer4,layer5,layer6,layer7,layer8,layer9,layer10,layer11,layer12,layer13,layer14,layer15];
+    
+    for (var i = chatdata.length-1; i >= 0; i--){
+      var name = chatdata[i][5].originName;
+      if (name == "RHSBot"){ name = chatdata[i][4].originName; }
+
+      mapEl.insertAdjacentHTML('afterend', ' <a class="chatbtn" data-idx="'+(i)+'" href="#" id="chat'+(i+1)+'">'+name+'</a>');
+
+      var showLayer = function(event){
+        var idx = event.target.getAttribute("data-idx");
+        lg.clearLayers();
+        lg = populate(chatdata[idx]);
+        lg.addTo(map);
+      };
+
+      document.getElementById('chat'+(i+1)).addEventListener("click",showLayer,false);
+    }
+
+  </script>
+</body>
+</html>
+
