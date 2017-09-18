@@ -36,19 +36,25 @@
     function populate(layer) {
       var layersList = [];
       var fuzzLatlng, m, sameLocation;
+      var startLocation = [55.94087999724767, -3.3700762191207886];
+      var centrePoint = new L.latLng(55.94087999724767, -3.37400762191207);
       var previousLatLng = [0.0, 0.0];
+      
       var content = '';
       var options = { color: 'blue', fillColor: '#bbf', fillOpacity: 0.5 };
       var imgCount = 0;
 
       for (var i = 0; i < layer.length; i++) {
         fuzzLatlng = [parseFloat(layer[i].latitude), parseFloat(layer[i].longitude)];
+        newPoint = new L.latLng(fuzzLatlng[0], fuzzLatlng[1]);
         
         sameLocation = (near(previousLatLng[0], fuzzLatlng[0]) &&
           near(previousLatLng[1], fuzzLatlng[1]));
 
         if ((fuzzLatlng[0] == 0.0) || (fuzzLatlng[1] == 0.0)){ sameLocation = true; }
-        
+
+        if (newPoint.distanceTo(centrePoint) >= 600){ sameLocation = true; }
+
         if (i == 0){ sameLocation = false; }
 
         if (layer[i].text.includes("<img")){
@@ -64,15 +70,27 @@
         } else {
           if (i==0){
             previousLatLng = fuzzLatlng; 
+            if ((fuzzLatlng[0] == 0.0) || (fuzzLatlng[1] == 0.0)){
+              fuzzLatlng = startLocation;
+            }
             options = { color: 'green', radius: 20 }; 
           } else {
             options = { color: 'blue', radius: 10 };
           }
 
+          if ((fuzzLatlng[0] == 0.0) || (fuzzLatlng[1] == 0.0)){
+            fuzzLatlng = [parseFloat(layer[i+1].latitude), parseFloat(layer[i+1].longitude)];
+          }
+
           m = new L.CircleMarker(fuzzLatlng, options);
-          console.log(m);
-          m.bindPopup('<h3>'+layer[i].originName+'</h3><p>'+layer[i].text+
-            '</p><p>'+layer[i].timestamp+'<i></i></p>', { maxWidth: 500 }).openPopup();
+          m.bindPopup('<h3>'+layer[i].originName+'</h3><p>'+
+            layer[i].text+'</p><p>'+
+            layer[i].timestamp+'<i></i></p>', { maxWidth: 500 });
+          
+          /*m.on('click', function(y) {
+            console.log("yo");
+            console.log();
+          });*/
 
           if (i == (layer.length-1)) { m.setStyle({color:'red'}); }
 
@@ -86,8 +104,12 @@
       for (var i = 0; i < layersList.length; i++) { 
         pathCoords.push([layersList[i].getLatLng().lat,layersList[i].getLatLng().lng]);
       }
-      var pathLine = L.polyline(pathCoords);
-      layersList.push(pathLine);
+
+      var polyline = new L.polyline(pathCoords, { 
+        dashArray: "5,5", opacity: 0.8 });
+
+      layersList.push(polyline);
+
       return new L.layerGroup(layersList);
     }
 
